@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nocturne — the first collection from Ekkomi. Five impulses. Five jackets." />
+  <title>Ekkomi — Nocturne</title>
+  <link rel="icon" type="image/png" href="assets/ekkomi_favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#collection">Skip to collection</a>
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Ekkomi home">
+      <img class="wordmark-logo" src="assets/Ekkomi_logo_1.png" alt="Ekkomi" width="200" height="120" />
+      <span class="wordmark-text">EKKOMI</span>
+    </a>
+    <span class="header-detail">The first collection</span>
+    <button class="menu-button" type="button" aria-label="Open menu">Menu <span aria-hidden="true">+</span></button>
+  </header>
+
+  <main id="top">
+    <section class="intro section" aria-labelledby="nocturne-title">
+      <p class="eyebrow">The first collection</p>
+      <h1 id="nocturne-title">Nocturne</h1>
+      <p class="intro-statement">Five impulses. Five jackets. A collection that reconsiders what we&#8217;ve been taught
+        to keep in check.</p>
+      <!-- role="tablist" — JS renders role="tab" buttons inside -->
+      <nav class="impulse-nav" role="tablist" aria-label="Choose a Nocturne jacket" id="impulseNav"></nav>
+    </section>
+
+    <!-- ============================================================
+         PRODUCT CAROUSEL STRIP — infinite marquee + two-way tab sync
+         JS populates #inlineCarouselTrack with original + clone cards.
+         ============================================================ -->
+    <section class="inline-carousel-section" aria-label="Nocturne jackets" id="inlineCarouselSection">
+      <div class="inline-carousel" id="inlineCarousel">
+        <div class="inline-carousel-track" id="inlineCarouselTrack" role="list"></div>
+      </div>
+    </section>
+
+
+    <!-- role="tabpanel" — controlled by the tablist above -->
+    <section class="showcase" id="collection" role="tabpanel" aria-live="polite" aria-labelledby="productHeadline">
+      <div class="showcase-visual">
+        <p class="visual-caption">Nocturne / <span id="visualNumber">03</span> — <span id="visualImpulse">Desire</span>
+          <span class="gallery-counter" id="galleryCounter" aria-live="polite">· 01 / 03</span>
+        </p>
+        <div class="jacket-stage" id="jacketStage" role="region" aria-label="Jacket image gallery — swipe or use arrows to view more angles" tabindex="0">
+          <button class="gallery-nav-btn gallery-prev-btn" id="galleryPrevBtn" type="button" aria-label="Previous view of this jacket">
+            <span aria-hidden="true">&#8592;</span>
+          </button>
+          <img id="jacketImage" src="assets/collection/nocturne/desire/desire.jpg?v=original" alt="Deep red jacket — Desire"
+            width="1200" height="1500" />
+          <!-- Neutral beige fallback shown on image error -->
+          <div class="jacket-img-fallback" id="jacketImgFallback" aria-hidden="true">
+            <span id="fallbackLabel"></span>
+          </div>
+          <button class="gallery-nav-btn gallery-next-btn" id="galleryNextBtn" type="button" aria-label="Next view of this jacket">
+            <span aria-hidden="true">&#8594;</span>
+          </button>
+        </div>
+        <div class="showcase-arrows">
+          <button class="round-button" id="previousButton" type="button" aria-label="Previous jacket">&#8592;</button>
+          <button class="round-button" id="nextButton" type="button" aria-label="Next jacket">&#8594;</button>
+        </div>
+        <nav class="gallery-pills" id="galleryPills" role="tablist" aria-label="Jacket views"></nav>
+      </div>
+
+      <div class="product-meta" id="productMeta">
+        <p class="eyebrow" id="productImpulse">Desire</p>
+        <p id="productColour">Deep Red</p>
+      </div>
+
+      <article class="showcase-content" id="showcaseContent">
+        <h2 id="productHeadline">Wanting more is not always greed. Sometimes it is vision.</h2>
+        <p class="product-narrative" id="productNarrative"></p>
+        <dl class="details-list">
+          <div>
+            <dt>The Material</dt>
+            <dd id="productMaterial"></dd>
+          </div>
+          <div>
+            <dt>The Embroidery</dt>
+            <dd id="productEmbroidery"></dd>
+          </div>
+          <div>
+            <dt>The Inner World</dt>
+            <dd id="productInnerWorld"></dd>
+          </div>
+          <!-- hidden by JS until real construction copy is supplied -->
+          <div id="constructionRow" hidden>
+            <dt>The Construction</dt>
+            <dd id="productConstruction"></dd>
+          </div>
+        </dl>
+        <a class="text-link" id="productLink" href="#collection" aria-label="View Desire jacket">
+          View product <span class="arrow" aria-hidden="true">&#8594;</span>
+        </a>
+      </article>
+    </section>
+
+
+  </main>
+
+  <footer class="site-footer">
+    <img class="footer-logo" src="assets/Ekkomi_logo_2.png" alt="Ekkomi" width="160" height="96" />
+    <span>Nocturne / 2026</span>
+    <span class="footer-tagline">Made to be discovered.</span>
+  </footer>
+
+  <script src="app.js?v=9"></script>
+</body>
+
+</html>
