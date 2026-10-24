@@ -44,9 +44,12 @@ const collectionData = [
     colour: 'Dark Navy',
     image: imgPath('curiosity', 'curiosity.jpg'),
     views: [
-      { label: 'Front',  src: imgPath('curiosity', 'curiosity.jpg'),        alt: 'Dark Navy jacket — Curiosity Front' },
-      { label: 'Detail', src: imgPath('curiosity', 'curiosity_detail.jpg'), alt: 'Dark Navy jacket — Curiosity Embroidery Detail' },
-      { label: 'Back',   src: imgPath('curiosity', 'curiosity_back.jpg'),   alt: 'Dark Navy jacket — Curiosity Back' }
+      { label: 'Front',      src: imgPath('curiosity', 'curiosity.jpg'),            alt: 'Dark Navy jacket — Curiosity Front' },
+      { label: 'Detail',     src: imgPath('curiosity', 'curiosity_detail.jpg'),     alt: 'Dark Navy jacket — Curiosity Embroidery Detail' },
+      { label: 'Back',       src: imgPath('curiosity', 'curiosity_back.jpg'),       alt: 'Dark Navy jacket — Curiosity Back' },
+      { label: 'Lining',     src: imgPath('curiosity', 'curiosity_lining.jpg'),     alt: 'Dark Navy jacket — Curiosity Illustrated Lining' },
+      { label: 'Lookbook 1', src: imgPath('curiosity', 'curiosity_lookbook_1.jpg'), alt: 'Dark Navy jacket — Curiosity Male Model Lookbook' },
+      { label: 'Lookbook 2', src: imgPath('curiosity', 'curiosity_lookbook_2.jpg'), alt: 'Dark Navy jacket — Curiosity Male Model Side Profile' }
     ],
     headline: 'They told you curiosity was dangerous. It is also how every new world is found.',
     narrative: 'Curiosity refuses the comfort of the already known. It looks twice, asks another question, follows the detail others might pass by. Rendered in deep navy suede, intricate tone-on-tone embroidery rewards that same instinct — receding into the surface at first glance, then revealing more as light moves across it. A piece made for those who would rather discover than simply be shown.',
@@ -63,9 +66,11 @@ const collectionData = [
     colour: 'Forest Green',
     image: imgPath('temptation', 'temptation.jpg'),
     views: [
-      { label: 'Front',  src: imgPath('temptation', 'temptation.jpg'),        alt: 'Forest Green jacket — Temptation Front' },
-      { label: 'Detail', src: imgPath('temptation', 'temptation_detail.jpg'), alt: 'Forest Green jacket — Temptation Embroidery Detail' },
-      { label: 'Back',   src: imgPath('temptation', 'temptation_back.jpg'),   alt: 'Forest Green jacket — Temptation Back' }
+      { label: 'Front',      src: imgPath('temptation', 'temptation.jpg'),            alt: 'Forest Green jacket — Temptation Front Full Body' },
+      { label: 'Detail',     src: imgPath('temptation', 'temptation_detail.jpg'),     alt: 'Forest Green jacket — Temptation Side Embroidery Detail' },
+      { label: 'Back',       src: imgPath('temptation', 'temptation_back.jpg'),       alt: 'Forest Green jacket — Temptation Back Lapel Embroidery' },
+      { label: 'Lookbook 1', src: imgPath('temptation', 'temptation_lookbook_1.jpg'), alt: 'Forest Green jacket — Temptation Male Model Seated' },
+      { label: 'Lookbook 2', src: imgPath('temptation', 'temptation_lookbook_2.jpg'), alt: 'Forest Green jacket — Temptation Male Model Armchair' }
     ],
     headline: 'Not every temptation is a weakness. Sometimes it is recognition.',
     narrative: 'Temptation begins with the awareness that something else is possible — a pull toward what lies just beyond the choices already made for us. In deep forest green suede, tone-on-tone embroidery moves between shadow and visibility, creating a surface that reveals itself gradually rather than giving everything away. A piece for the possibility that becomes increasingly difficult to ignore.',
@@ -82,9 +87,16 @@ const collectionData = [
     colour: 'Deep Red',
     image: imgPath('desire', 'desire.jpg'),
     views: [
-      { label: 'Front',  src: imgPath('desire', 'desire.jpg'),        alt: 'Deep Red jacket — Desire Front' },
-      { label: 'Detail', src: imgPath('desire', 'desire_detail.jpg'), alt: 'Deep Red jacket — Desire Embroidery Detail' },
-      { label: 'Back',   src: imgPath('desire', 'desire_back.jpg'),   alt: 'Deep Red jacket — Desire Back' }
+      { label: 'Front',       src: imgPath('desire', 'desire.jpg'),             alt: 'Deep Red jacket — Desire Front Seated' },
+      { label: 'Detail',      src: imgPath('desire', 'desire_detail.jpg'),      alt: 'Deep Red jacket — Desire Male Back Embroidery Detail' },
+      { label: 'Back',        src: imgPath('desire', 'desire_back.jpg'),        alt: 'Deep Red jacket — Desire Female Back Embroidery' },
+      { label: 'Lining',      src: imgPath('desire', 'desire_lining.jpg'),      alt: 'Deep Red jacket — Desire Illustrated Inner Lining' },
+      { label: 'Lookbook 1',  src: imgPath('desire', 'desire_lookbook_1.jpg'),  alt: 'Deep Red jacket — Desire Male Model Standing' },
+      { label: 'Lookbook 2',  src: imgPath('desire', 'desire_lookbook_2.jpg'),  alt: 'Deep Red jacket — Desire Male Model Side Angle' },
+      { label: 'Lookbook 3',  src: imgPath('desire', 'desire_lookbook_3.jpg'),  alt: 'Deep Red jacket — Desire Male Model Lounge Chair' },
+      { label: 'Editorial 1', src: imgPath('desire', 'desire_editorial_1.jpg'), alt: 'Deep Red jacket — Desire Female Model Sofa' },
+      { label: 'Editorial 2', src: imgPath('desire', 'desire_editorial_2.jpg'), alt: 'Deep Red jacket — Desire Female Model Close-up' },
+      { label: 'Editorial 3', src: imgPath('desire', 'desire_editorial_3.jpg'), alt: 'Deep Red jacket — Desire Female Model Standing' }
     ],
     headline: 'Wanting more is not always greed. Sometimes it is vision.',
     narrative: 'Desire is the instinct that refuses to be satisfied by what is already there. It begins with recognition — of what could be, of what is missing, of what feels worth moving toward — and turns that recognition into intent. There is nothing passive about it. Rendered in deep red suede, the jacket carries that tension between restraint and appetite. Tone-on-tone embroidery moves through the surface in shifting fragments, revealing itself gradually as light catches the garment and then recedes again. Sensual without spectacle. Expressive without surrendering restraint.',
@@ -101,9 +113,13 @@ const collectionData = [
     colour: 'Deep Mustard',
     image: imgPath('audacity', 'audacity.jpg'),
     views: [
-      { label: 'Front',  src: imgPath('audacity', 'audacity.jpg'),        alt: 'Deep Mustard jacket — Audacity Front' },
-      { label: 'Detail', src: imgPath('audacity', 'audacity_detail.jpg'), alt: 'Deep Mustard jacket — Audacity Embroidery Detail' },
-      { label: 'Back',   src: imgPath('audacity', 'audacity_back.jpg'),   alt: 'Deep Mustard jacket — Audacity Back' }
+      { label: 'Front',       src: imgPath('audacity', 'audacity.jpg'),             alt: 'Deep Mustard jacket — Audacity Front View' },
+      { label: 'Detail',      src: imgPath('audacity', 'audacity_detail.jpg'),      alt: 'Deep Mustard jacket — Audacity Embroidery Detail' },
+      { label: 'Back',        src: imgPath('audacity', 'audacity_back.jpg'),        alt: 'Deep Mustard jacket — Audacity Back View' },
+      { label: 'Editorial 1', src: imgPath('audacity', 'audacity_editorial_1.jpg'), alt: 'Deep Mustard jacket — Audacity Female Model Seated Portrait' },
+      { label: 'Editorial 2', src: imgPath('audacity', 'audacity_editorial_2.jpg'), alt: 'Deep Mustard jacket — Audacity Female Model with Street Lamp' },
+      { label: 'Lookbook 1',  src: imgPath('audacity', 'audacity_lookbook_1.jpg'),  alt: 'Deep Mustard jacket — Audacity Male Model with Scarf' },
+      { label: 'Lookbook 2',  src: imgPath('audacity', 'audacity_lookbook_2.jpg'),  alt: 'Deep Mustard jacket — Audacity Male Model Front Embroidery' }
     ],
     headline: 'Audacity is confidence before permission arrives.',
     narrative: 'Audacity is the willingness to move before the world has decided you may. To take the unexpected route, occupy the space available to you — and occasionally the space that was not. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricacy and restraint. A piece that stands apart without turning difference into performance.',
@@ -120,9 +136,13 @@ const collectionData = [
     colour: 'Black',
     image: imgPath('insolence', 'insolence.jpg'),
     views: [
-      { label: 'Front',  src: imgPath('insolence', 'insolence.jpg'),        alt: 'Black jacket — Insolence Front' },
-      { label: 'Detail', src: imgPath('insolence', 'insolence_detail.jpg'), alt: 'Black jacket — Insolence Embroidery Detail' },
-      { label: 'Back',   src: imgPath('insolence', 'insolence_back.jpg'),   alt: 'Black jacket — Insolence Back' }
+      { label: 'Front',       src: imgPath('insolence', 'insolence.jpg'),             alt: 'Black jacket — Insolence Male Model Seated' },
+      { label: 'Detail',      src: imgPath('insolence', 'insolence_detail.jpg'),      alt: 'Black jacket — Insolence Male Model Floor Angle' },
+      { label: 'Back',        src: imgPath('insolence', 'insolence_back.jpg'),        alt: 'Black jacket — Insolence Back Shoulder Embroidery' },
+      { label: 'Editorial 1', src: imgPath('insolence', 'insolence_editorial_1.jpg'), alt: 'Black jacket — Insolence Female Model Standing Full-Body' },
+      { label: 'Editorial 2', src: imgPath('insolence', 'insolence_editorial_2.jpg'), alt: 'Black jacket — Insolence Female Model Seated Chair' },
+      { label: 'Editorial 3', src: imgPath('insolence', 'insolence_editorial_3.jpg'), alt: 'Black jacket — Insolence Female Model Side Chair' },
+      { label: 'Editorial 4', src: imgPath('insolence', 'insolence_editorial_4.jpg'), alt: 'Black jacket — Insolence Female Model Front Close-up' }
     ],
     headline: 'Respect the rule. Question its right to rule you.',
     narrative: 'Insolence begins with discernment. Not the rejection of convention for its own sake, but the confidence to decide which traditions deserve respect — and which have simply become habits of obedience. Rendered in black suede, near-concealed tonal embroidery turns restraint into something more subversive: detail that exists without demanding recognition. Refined, controlled and entirely capable of disobedience.',
@@ -234,9 +254,12 @@ function updateGalleryUI(item) {
     return;
   }
 
+  const currentView = views[currentViewIndex] || views[0];
+
   if (counter) {
     counter.style.display = '';
-    counter.textContent = `· ${String(currentViewIndex + 1).padStart(2, '0')} / ${String(views.length).padStart(2, '0')}`;
+    const labelStr = currentView && currentView.label ? ` · ${currentView.label}` : '';
+    counter.textContent = `· ${String(currentViewIndex + 1).padStart(2, '0')} / ${String(views.length).padStart(2, '0')}${labelStr}`;
   }
 
   if (prevBtn) {
@@ -257,13 +280,14 @@ function updateGalleryUI(item) {
     pills.style.display = '';
     pills.innerHTML = views.map((v, i) => `
       <button
-        class="gallery-pill${i === currentViewIndex ? ' is-active' : ''}"
+        class="gallery-indicator-bar${i === currentViewIndex ? ' is-active' : ''}"
         type="button"
         role="tab"
         aria-selected="${i === currentViewIndex}"
-        aria-label="View ${v.label} angle"
+        aria-label="View ${v.label} (${i + 1} of ${views.length})"
+        title="${v.label}"
         data-view-index="${i}"
-      >${v.label}</button>
+      ><span class="indicator-line" aria-hidden="true"></span><span class="sr-only">${v.label}</span></button>
     `).join('');
   }
 }

@@ -128,6 +128,19 @@ p {
 }
 .skip-link:focus { top: 1rem; }
 
+/* Screen-reader only accessible utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 
 /* -------------------------------------------------------------------
    FOCUS STYLES — visible ring on keyboard navigation
@@ -795,48 +808,66 @@ h1 {
   transform: translateY(-50%) scale(0.96);
 }
 
-/* Gallery view indicator pills */
+/* Gallery view indicators — Sleek luxury progress bars */
 .gallery-pills {
   position: absolute;
   bottom: 2rem;
   right: clamp(1.25rem, 4vw, 3rem);
   display: flex;
-  gap: 0.4rem;
+  flex-wrap: nowrap;
   align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(250, 246, 241, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 220, 213, 0.85);
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(44, 34, 30, 0.08);
   z-index: 2;
+  transition: opacity var(--motion-fast), transform var(--motion-fast);
 }
 
-.gallery-pill {
-  border: 1px solid rgba(229, 220, 213, 0.8);
-  background: rgba(250, 246, 241, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 14px rgba(44, 34, 30, 0.08);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 0.45rem 0.9rem;
-  border-radius: 2px;
+.gallery-indicator-bar {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 6px 3px;
   cursor: pointer;
-  transition: all var(--motion-fast);
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--motion-fast);
 }
 
-.gallery-pill:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+.gallery-indicator-bar .indicator-line {
+  display: block;
+  width: 18px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: rgba(64, 48, 44, 0.28);
+  transition: width 0.32s cubic-bezier(0.25, 1, 0.5, 1),
+              background-color var(--motion-fast),
+              opacity var(--motion-fast);
 }
 
-.gallery-pill.is-active {
+.gallery-indicator-bar:hover .indicator-line {
   background: var(--color-accent);
-  color: var(--color-accent-text);
-  border-color: var(--color-accent);
+  opacity: 0.75;
 }
 
-.gallery-pill:active {
-  transform: scale(0.96);
+.gallery-indicator-bar.is-active .indicator-line {
+  width: 34px;
+  background: var(--color-accent);
+  opacity: 1;
+}
+
+.gallery-indicator-bar:focus-visible {
+  outline: none;
+}
+.gallery-indicator-bar:focus-visible .indicator-line {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 @media (hover: none) {
@@ -876,49 +907,52 @@ h1 {
 }
 
 .showcase-content h2 {
-  max-width: 600px;
-  margin: clamp(2.4rem, 4vw, 4.5rem) 0 1.7rem;
+  max-width: 640px;
+  margin: clamp(2.4rem, 4vw, 4.5rem) 0 1.8rem;
   font-family: var(--font-script);
   font-weight: normal;
-  font-size: clamp(2.3rem, 4.2vw, 4.2rem);
-  line-height: 1.15;
+  font-size: clamp(2.6rem, 4.5vw, 4.4rem);
+  line-height: 1.18;
   letter-spacing: 0;
   text-transform: none;
+  color: var(--color-text);
 }
 
 .product-narrative {
-  max-width: 550px;
-  color: var(--color-text-secondary);
+  max-width: 620px;
+  color: #3b2c28;
   font-family: var(--font-body);
-  font-size: 16.5px;
-  line-height: 1.75;
-  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  font-size: clamp(18.5px, 1.28vw, 20.5px);
+  line-height: 1.82;
+  letter-spacing: 0.01em;
+  margin-bottom: clamp(2.2rem, 4vw, 3.8rem);
 }
 
 .details-list {
   margin: 0;
+  max-width: 620px;
   border-top: 1px solid var(--color-border);
 }
 .details-list div {
   display: grid;
-  grid-template-columns: 130px 1fr;
-  gap: 1.25rem;
-  padding: 1.15rem 0;
+  grid-template-columns: 140px 1fr;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--color-border);
 }
 .details-list dt {
   text-transform: uppercase;
-  letter-spacing: .12em;
+  letter-spacing: .14em;
   font-family: var(--font-sans);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: normal;
   color: var(--color-text);
 }
 .details-list dd {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--color-text-secondary);
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #3b2c28;
 }
 
 /* VIEW PRODUCT link — animated arrow on hover (FAULT 8) */
@@ -1019,19 +1053,58 @@ h1 {
   }
 
   .intro {
-    padding-top: 5rem;
-    padding-bottom: 3.5rem;
+    padding-top: 3.5rem;
+    padding-bottom: 2.5rem;
+    text-align: center;
   }
 
-  /* NOCTURNE never overflows at 375px */
+  /* NOCTURNE — fits comfortably at 375px with letter-spacing */
   h1 {
-    font-size: clamp(3.4rem, 18vw, 6rem);
+    font-size: clamp(2.6rem, 13vw, 5rem);
     margin-bottom: 1.8rem;
+    letter-spacing: 0.12em;
+    text-align: center;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .eyebrow {
+    text-align: center;
+    font-size: 11px;
   }
 
   .intro-statement {
-    font-size: 1.2rem;
-    margin-bottom: 3rem;
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* Bump up mobile product text sizes for readability */
+  .product-narrative {
+    font-size: 18.5px;
+    line-height: 1.8;
+  }
+
+  .details-list dd {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .details-list dt {
+    font-size: 11px;
+  }
+
+  .text-link {
+    font-size: 12px;
+  }
+
+  .product-meta p {
+    font-size: 11px;
   }
 
   /* Tab list: allow scroll on small screens */
@@ -1098,15 +1171,34 @@ h1 {
   .gallery-pills {
     position: absolute;
     bottom: 1rem;
-    right: 1rem;
+    right: 0.75rem;
+    left: auto;
+    max-width: calc(100% - 1.5rem);
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.25rem;
     margin: 0;
-    padding: 0;
+    padding: 0.35rem 0.55rem;
     z-index: 2;
   }
+  .gallery-pills::-webkit-scrollbar {
+    display: none;
+  }
 
-  .gallery-pill {
-    padding: 0.35rem 0.65rem;
-    font-size: 8.5px;
+  .gallery-indicator-bar {
+    padding: 4px 2px;
+  }
+
+  .gallery-indicator-bar .indicator-line {
+    width: 13px;
+    height: 2px;
+  }
+
+  .gallery-indicator-bar.is-active .indicator-line {
+    width: 22px;
   }
 
   .gallery-nav-btn {
@@ -1159,6 +1251,37 @@ h1 {
   }
 }
 
+/* -------------------------------------------------------------------
+   RESPONSIVE — SMALL PHONE ≤ 400px
+   ------------------------------------------------------------------- */
+
+@media (max-width: 400px) {
+  h1 {
+    font-size: clamp(2.2rem, 12vw, 3.4rem);
+    letter-spacing: 0.08em;
+  }
+
+  .intro-statement {
+    font-size: 1.1rem;
+  }
+
+  .showcase-content h2 {
+    font-size: clamp(1.6rem, 6.5vw, 2.2rem);
+  }
+
+  .impulse-button {
+    font-size: 0.7rem;
+  }
+
+  .header-detail {
+    display: none;
+  }
+
+  .ic-label-left,
+  .ic-label-right {
+    font-size: 8.5px;
+  }
+}
 
 /* -------------------------------------------------------------------
    ACCESSIBILITY — REDUCED MOTION
