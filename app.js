@@ -401,9 +401,7 @@ async function selectJacket(id, { fromCarousel = false } = {}) {
   selectedJacketId = id;
   currentViewIndex = 0;
   syncURL(id);
-  renderControls();  /* update active tab + carousel card immediately */
-  updateInlineCarouselActive();  /* sync inline product carousel active state */
-  scrollInlineCarouselToActive(); /* bring selected card into view */
+  renderControls();  /* update active tab immediately */
   updateGalleryUI(item);
 
   const views = getViewsForItem(item);
@@ -664,255 +662,313 @@ document.addEventListener('click', (e) => {
 
 
 /* -------------------------------------------------------------------
-   INLINE PRODUCT CAROUSEL — rAF-driven marquee + two-way tab sync
-   Architecture:
-   • Track holds original 5 cards + 5 aria-hidden clones (10 total).
-   • JS rAF loop translates the track by icState.speed px/frame.
-   • When translateX reaches -halfWidth, it resets to 0 → seamless.
-   • Tab click → snap-to-card animation (ease toward target translateX).
-   • Two-way sync: every frame calculates the centered original card
-     and updates the impulse-nav tab active states (lightweight toggle,
-     NOT a full selectJacket() call during auto-scroll).
-   • Pause sources: hover, pause button, tab click (4 s auto-resume).
+   3D PERSPECTIVE DRIFT WALL
+   Replaces the sliding carousel in the hero section.
+   Drifts continuous columns of jacket photos from jackets_original,
+   lifting tiles on hover with smooth 3D perspective and mouse parallax.
+   Clicking a tile selects that jacket in the collection showcase.
    ------------------------------------------------------------------- */
 
-/* ── State ──────────────────────────────────────────────────────── */
-const icState = {
-  translateX:     0,      /* current track offset in px */
-  speed:          0.48,   /* px per rAF frame ≈ 29px/s at 60fps */
-  paused:         false,  /* hovered or button-paused */
-  userPaused:     false,  /* explicit pause-button press */
-  snapping:       false,  /* currently easing toward snapTarget */
-  snapTarget:     null,   /* target translateX for snap */
-  snapTimer:      null,   /* timeout to resume after snap */
-  rafId:          null,
-  halfWidth:      0,      /* px-width of one full set (5 cards + gaps) */
-  cardWidth:      0,
-  cardGap:        0,
-  padLeft:        0,      /* track padding-left in px */
-  lastTabId:      null,   /* last id pushed to tab bar during auto-scroll */
-};
+const wallTiles = [
+  { image: 'jackets_original/resized_BEN03137.webp', title: 'Curiosity · Dark Navy', jacket: 'curiosity' },
+  { image: 'jackets_original/resized_BEN03166.webp', title: 'Curiosity · Angle View', jacket: 'curiosity' },
+  { image: 'jackets_original/resized_BEN03202.webp', title: 'Curiosity · Male Model', jacket: 'curiosity' },
+  { image: 'jackets_original/resized_BEN04014.webp', title: 'Temptation · Forest Green', jacket: 'temptation' },
+  { image: 'assets/collection/nocturne/temptation/temptation_lookbook_1.jpg', title: 'Temptation · Seated', jacket: 'temptation' },
+  { image: 'jackets_original/resized_BEN03324.webp', title: 'Desire · Deep Red', jacket: 'desire' },
+  { image: 'jackets_original/resized_BEN03515.webp', title: 'Desire · Lounge Chair', jacket: 'desire' },
+  { image: 'assets/collection/nocturne/desire/desire_editorial_1.jpg', title: 'Desire · Editorial', jacket: 'desire' },
+  { image: 'jackets_original/resized_BEN03619.webp', title: 'Audacity · Deep Mustard', jacket: 'audacity' },
+  { image: 'jackets_original/resized_BEN03655.webp', title: 'Audacity · Embroidery Detail', jacket: 'audacity' },
+  { image: 'jackets_original/resized_BEN03767.webp', title: 'Audacity · Looking Away', jacket: 'audacity' },
+  { image: 'jackets_original/resized_BEN03806.webp', title: 'Audacity · Front View', jacket: 'audacity' },
+  { image: 'jackets_original/resized_BEN04053.webp', title: 'Insolence · Black', jacket: 'insolence' },
+  { image: 'jackets_original/resized_BEN04058.webp', title: 'Insolence · Sunglasses', jacket: 'insolence' },
+  { image: 'jackets_original/resized_BEN04068.webp', title: 'Insolence · Side Profile', jacket: 'insolence' },
+  { image: 'jackets_original/resized_BEN04099.webp', title: 'Insolence · Female Model', jacket: 'insolence' },
+  { image: 'jackets_original/resized_DSC04253.webp', title: 'Nocturne · Craftsmanship', jacket: 'curiosity' },
+  { image: 'assets/collection/nocturne/curiosity/curiosity_lookbook_1.jpg', title: 'Curiosity · Full Body', jacket: 'curiosity' },
+  { image: 'assets/collection/nocturne/temptation/temptation_lookbook_2.jpg', title: 'Temptation · Armchair', jacket: 'temptation' },
+  { image: 'assets/collection/nocturne/desire/desire_lookbook_2.jpg', title: 'Desire · Side Angle', jacket: 'desire' }
+];
 
-/* ── Render ─────────────────────────────────────────────────────── */
-function renderInlineCarousel() {
-  const track = $('#inlineCarouselTrack');
-  if (!track) return;
+function initDriftWall() {
+  const container = document.getElementById('heroDriftWall');
+  if (!container) return;
 
-  const makeCard = (item, clone) => `
-    <div
-      class="inline-jacket-card${!clone && item.id === selectedJacketId ? ' is-active' : ''}"
-      data-jacket="${item.id}"
-      role="${clone ? 'presentation' : 'listitem'}"
-      ${clone
-        ? 'aria-hidden="true" tabindex="-1"'
-        : `tabindex="0" aria-label="${item.impulse} — ${item.colour}"`}
-    >
-      <div class="inline-card-img">
-        <img
-          src="${item.image}"
-          alt="${clone ? '' : `${item.impulse} jacket, ${item.colour}`}"
-          loading="lazy"
-          width="1200"
-          height="1500"
-        >
-      </div>
-      <div class="inline-card-label">
-        <span class="ic-label-left">${item.number} / ${item.impulse.toUpperCase()}</span>
-        <span class="ic-label-right">${item.colour.toUpperCase()}</span>
-      </div>
-    </div>`;
+  const columns = 5;
+  const tileWidth = 220;
+  const tileHeight = 300;
+  const gap = 16;
+  const radius = 8;
+  const tilt = 14;
+  const turn = -12;
+  const roll = 0;
+  const perspective = 1100;
+  const depth = 100;
+  const speed = 28;
+  const direction = 'up';
+  const variance = 0.4;
+  const parallax = 0.5;
+  const lift = 72;
+  const fade = 0.55;
+  const dim = 0.48;
+  const overlayColor = '#080706';
 
-  /* Originals first, then aria-hidden clones */
-  track.innerHTML =
-    collectionData.map(item => makeCard(item, false)).join('') +
-    collectionData.map(item => makeCard(item, true)).join('');
-}
+  let containerHeight = container.offsetHeight || 640;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── Measure card geometry after render ─────────────────────────── */
-function icMeasure() {
-  const track = $('#inlineCarouselTrack');
-  if (!track) return;
-  const cards = track.querySelectorAll('.inline-jacket-card');
-  if (cards.length < 2) return;
-  const c0 = cards[0];
-  const c1 = cards[1];
-  icState.cardWidth = c0.offsetWidth;
-  icState.cardGap   = c1.offsetLeft - c0.offsetLeft - c0.offsetWidth;
-  icState.padLeft   = c0.offsetLeft; /* track padding-left reflected here */
-  icState.halfWidth = collectionData.length * (icState.cardWidth + icState.cardGap);
-}
-
-/* ── Detect which original card is nearest to carousel centre ───── */
-function icCenteredId() {
-  const carousel = $('#inlineCarousel');
-  if (!carousel || icState.halfWidth === 0) return null;
-  const viewCentre = carousel.offsetWidth / 2;
-  const step = icState.cardWidth + icState.cardGap;
-  let bestId = null, minDist = Infinity;
-  collectionData.forEach((item, i) => {
-    const cardCentre = icState.padLeft + i * step + icState.cardWidth / 2 + icState.translateX;
-    const dist = Math.abs(cardCentre - viewCentre);
-    if (dist < minDist) { minDist = dist; bestId = item.id; }
+  // Distribute tiles across 5 columns
+  const columnItems = Array.from({ length: columns }, () => []);
+  wallTiles.forEach((tile, i) => {
+    columnItems[i % columns].push(tile);
   });
-  return bestId;
-}
 
-/* ── Lightly update impulse-nav tabs (no full re-render) ─────────── */
-function icSyncTabs(id) {
-  document.querySelectorAll('#impulseNav .impulse-button').forEach(btn => {
-    const active = btn.dataset.jacket === id;
-    btn.classList.toggle('is-active', active);
-    btn.setAttribute('aria-selected', String(active));
-    btn.tabIndex = active ? 0 : -1;
+  const unit = tileHeight + gap;
+  const getColumnMeta = (col) => {
+    const copyHeight = Math.max(unit, col.length * unit);
+    const copies = Math.max(2, Math.ceil((containerHeight * 1.6) / copyHeight) + 1);
+    return { copyHeight, copies };
+  };
+
+  let columnMeta = columnItems.map(col => getColumnMeta(col));
+
+  const columnFactor = (index, v) => {
+    const pseudo = ((index * 0.6180339887 + 0.35) % 1) * 2 - 1;
+    return 1 + v * pseudo;
+  };
+
+  const dirSign = direction === 'up' ? 1 : -1;
+  const baseVelocities = columnItems.map((_, c) => {
+    const altSign = c % 2 === 0 ? 1 : -1;
+    return speed * columnFactor(c, variance) * dirSign * altSign;
   });
-}
 
-/* ── Update inline card active state (originals only) ───────────── */
-function updateInlineCarouselActive() {
-  document.querySelectorAll('.inline-jacket-card:not([aria-hidden])').forEach(card => {
-    card.classList.toggle('is-active', card.dataset.jacket === selectedJacketId);
-  });
-}
+  const offsets = columnMeta.map((meta, c) => meta.copyHeight * ((c * 0.37) % 1));
+  const velocities = columnItems.map(() => 0);
 
-/* ── Compute snap target translateX to centre a card ────────────── */
-function icSnapTargetFor(id) {
-  const carousel = $('#inlineCarousel');
-  if (!carousel || icState.halfWidth === 0) return null;
-  const idx  = collectionData.findIndex(j => j.id === id);
-  if (idx < 0) return null;
-  const step = icState.cardWidth + icState.cardGap;
-  let target = carousel.offsetWidth / 2
-               - (icState.padLeft + idx * step + icState.cardWidth / 2);
-  /* Normalise into [-halfWidth, 0] so it corresponds to a real track position */
-  while (target > 0)                target -= icState.halfWidth;
-  while (target < -icState.halfWidth) target += icState.halfWidth;
-  return target;
-}
+  // Build DOM
+  const root = document.createElement('div');
+  root.className = `drift-wall${reduced ? ' drift-wall--reduced' : ''}`;
+  root.style.setProperty('--dw-tile-w', `${tileWidth}px`);
+  root.style.setProperty('--dw-tile-h', `${tileHeight}px`);
+  root.style.setProperty('--dw-gap', `${gap}px`);
+  root.style.setProperty('--dw-radius', `${radius}px`);
+  root.style.setProperty('--dw-perspective', `${perspective}px`);
+  root.style.setProperty('--dw-lift', `${lift}px`);
+  root.style.setProperty('--dw-dim', dim);
+  root.style.setProperty('--dw-gray', 0);
+  root.style.setProperty('--dw-overlay', overlayColor);
+  root.style.setProperty('--dw-edge', `${Math.max(0, (1 - fade) * 100)}%`);
 
-/* ── Trigger a snap-to-card (called on tab click) ───────────────── */
-function scrollInlineCarouselToActive() {
-  const target = icSnapTargetFor(selectedJacketId);
-  if (target === null) return;
-  icState.snapTarget = target;
-  icState.snapping   = true;
-  icState.paused     = true;
-  clearTimeout(icState.snapTimer);
-  /* Auto-resume after 4 s of no interaction */
-  icState.snapTimer = setTimeout(() => {
-    if (!icState.userPaused) {
-      icState.snapping = false;
-      icState.paused   = false;
+  const plane = document.createElement('div');
+  plane.className = 'drift-wall__plane';
+  root.appendChild(plane);
+
+  const trackEls = [];
+
+  columnItems.forEach((col, c) => {
+    const meta = columnMeta[c];
+    const colEl = document.createElement('div');
+    colEl.className = 'drift-wall__col';
+    colEl.dataset.col = String(c);
+
+    const track = document.createElement('div');
+    track.className = 'drift-wall__track';
+    trackEls[c] = track;
+
+    for (let copy = 0; copy < meta.copies; copy++) {
+      col.forEach((item, itemIdx) => {
+        const tileId = `${c}-${copy}-${itemIdx}`;
+        const tile = document.createElement('div');
+        tile.className = 'drift-wall__tile';
+        tile.tabIndex = 0;
+        tile.setAttribute('role', 'button');
+        tile.setAttribute('aria-label', `${item.title} — view jacket`);
+        tile.dataset.tileId = tileId;
+        tile.dataset.col = String(c);
+        tile.dataset.jacket = item.jacket;
+
+        const inner = document.createElement('span');
+        inner.className = 'drift-wall__inner';
+
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.title;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.draggable = false;
+
+        const overlay = document.createElement('span');
+        overlay.className = 'drift-wall__overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+
+        const badge = document.createElement('span');
+        badge.className = 'drift-wall__badge';
+        badge.innerHTML = `<span>${item.jacket.toUpperCase()}</span><span>EXPLORE &rarr;</span>`;
+
+        inner.appendChild(img);
+        inner.appendChild(overlay);
+        inner.appendChild(badge);
+        tile.appendChild(inner);
+        track.appendChild(tile);
+      });
     }
-  }, 4000);
-}
 
-/* ── Main rAF loop ──────────────────────────────────────────────── */
-function icLoop() {
-  const track = $('#inlineCarouselTrack');
-  if (!track) return;
+    colEl.appendChild(track);
+    plane.appendChild(colEl);
+  });
 
-  if (icState.snapping && icState.snapTarget !== null) {
-    /* Ease toward snap target */
-    const diff = icState.snapTarget - icState.translateX;
-    if (Math.abs(diff) < 0.3) {
-      icState.translateX = icState.snapTarget;
+  container.innerHTML = '';
+  container.appendChild(root);
+
+  // Dynamic animation and hover interaction
+  let activeTileEl = null;
+  let hoveredCol = -1;
+  let wallHovered = false;
+  const pointer = { x: 0, y: 0 };
+  const pointerDamped = { x: 0, y: 0 };
+  let lastTs = null;
+  let rafId = null;
+
+  function applyPlaneTransform(px, py) {
+    plane.style.transform =
+      `translate(-50%, -50%) scale(1.18) ` +
+      `rotateX(${tilt + py}deg) rotateY(${turn + px}deg) rotateZ(${roll}deg) ` +
+      `translateZ(${-depth}px)`;
+  }
+  applyPlaneTransform(0, 0);
+
+  function setActiveTile(tile) {
+    if (activeTileEl === tile) return;
+    if (activeTileEl) activeTileEl.classList.remove('is-active');
+    activeTileEl = tile;
+    if (tile) {
+      tile.classList.add('is-active');
+      hoveredCol = Number(tile.dataset.col);
     } else {
-      icState.translateX += diff * 0.12;
-    }
-  } else if (!icState.paused) {
-    icState.translateX -= icState.speed;
-    /* Seamless loop reset */
-    if (icState.translateX <= -icState.halfWidth) {
-      icState.translateX += icState.halfWidth;
+      hoveredCol = -1;
     }
   }
 
-  track.style.transform = `translateX(${icState.translateX}px)`;
-
-  /* Two-way tab sync — update tabs to reflect centred card */
-  const centredId = icCenteredId();
-  if (centredId && centredId !== icState.lastTabId) {
-    icState.lastTabId = centredId;
-    /* During auto-scroll: only update visual tab, not the showcase */
-    if (!icState.snapping) {
-      icSyncTabs(centredId);
+  function releaseActive() {
+    if (activeTileEl) {
+      activeTileEl.classList.remove('is-active');
+      activeTileEl = null;
     }
+    hoveredCol = -1;
   }
 
-  icState.rafId = requestAnimationFrame(icLoop);
+  function animate(ts) {
+    if (lastTs === null) lastTs = ts;
+    const dt = Math.min(0.05, Math.max(0, ts - lastTs) / 1000);
+    lastTs = ts;
+
+    const maxTilt = parallax * 8;
+    const targetX = pointer.x * maxTilt;
+    const targetY = -pointer.y * maxTilt;
+    const damp = 1 - Math.exp(-dt / 0.12);
+    pointerDamped.x += (targetX - pointerDamped.x) * damp;
+    pointerDamped.y += (targetY - pointerDamped.y) * damp;
+    applyPlaneTransform(pointerDamped.x, pointerDamped.y);
+
+    if (!reduced) {
+      for (let c = 0; c < trackEls.length; c++) {
+        const meta = columnMeta[c];
+        if (!meta) continue;
+        const factor = (wallHovered && hoveredCol === c) ? 0 : 1;
+        const target = baseVelocities[c] * factor;
+
+        const ease = 1 - Math.exp(-dt / (target === 0 ? 0.16 : 0.28));
+        velocities[c] += (target - velocities[c]) * ease;
+        let next = offsets[c] + velocities[c] * dt;
+        next = ((next % meta.copyHeight) + meta.copyHeight) % meta.copyHeight;
+        offsets[c] = next;
+
+        const track = trackEls[c];
+        if (track) {
+          track.style.transform = `translate3d(0, ${-next}px, 0)`;
+        }
+      }
+    }
+
+    rafId = requestAnimationFrame(animate);
+  }
+
+  rafId = requestAnimationFrame(animate);
+
+  // ResizeObserver to adapt copy count seamlessly
+  const ro = new ResizeObserver(([entry]) => {
+    const h = entry.contentRect.height;
+    if (h && Math.abs(h - containerHeight) > 30) {
+      containerHeight = h;
+      columnMeta = columnItems.map(col => getColumnMeta(col));
+    }
+  });
+  ro.observe(container);
+
+  // Pointer interactions
+  root.addEventListener('pointerenter', () => {
+    wallHovered = true;
+  });
+
+  root.addEventListener('pointermove', (e) => {
+    const rect = root.getBoundingClientRect();
+    if (parallax > 0 && !reduced) {
+      pointer.x = (e.clientX - rect.left) / rect.width - 0.5;
+      pointer.y = (e.clientY - rect.top) / rect.height - 0.5;
+    }
+    const hit = document.elementFromPoint(e.clientX, e.clientY);
+    const tile = hit ? hit.closest('.drift-wall__tile') : null;
+    if (!tile) {
+      releaseActive();
+      return;
+    }
+    setActiveTile(tile);
+  });
+
+  root.addEventListener('pointerleave', () => {
+    wallHovered = false;
+    pointer.x = 0;
+    pointer.y = 0;
+    releaseActive();
+  });
+
+  // Click on tile -> select jacket & scroll to collection
+  root.addEventListener('click', (e) => {
+    const tile = e.target.closest('.drift-wall__tile');
+    if (!tile) return;
+    const jId = tile.dataset.jacket;
+    if (jId) {
+      selectJacket(jId);
+      const showcase = document.getElementById('collection');
+      if (showcase) {
+        showcase.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+
+  // Keyboard accessibility
+  root.addEventListener('focusin', (e) => {
+    const tile = e.target.closest('.drift-wall__tile');
+    if (tile) setActiveTile(tile);
+  });
+
+  root.addEventListener('focusout', () => {
+    releaseActive();
+  });
+
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const tile = e.target.closest('.drift-wall__tile');
+      if (tile && tile.dataset.jacket) {
+        e.preventDefault();
+        selectJacket(tile.dataset.jacket);
+        document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
 }
-
-/* ── Initialise ─────────────────────────────────────────────────── */
-function initInlineCarousel() {
-  const carousel = $('#inlineCarousel');
-  const track    = $('#inlineCarouselTrack');
-  const pauseBtn = $('#icPauseBtn');
-  if (!carousel || !track) return;
-
-  /* Reduced-motion: render static, skip loop */
-  if (isReducedMotion()) {
-    renderInlineCarousel();
-    updateInlineCarouselActive();
-    return;
-  }
-
-  renderInlineCarousel();
-
-  /* Measure after two rAF passes (layout is settled) */
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    icMeasure();
-    /* Snap to active jacket on first load */
-    scrollInlineCarouselToActive();
-    icState.rafId = requestAnimationFrame(icLoop);
-  }));
-
-  /* ── Hover: pause / resume ────────────────────────────────────── */
-  carousel.addEventListener('mouseenter', () => {
-    if (!icState.userPaused) icState.paused = true;
-  });
-  carousel.addEventListener('mouseleave', () => {
-    if (!icState.userPaused && !icState.snapping) icState.paused = false;
-  });
-
-  /* ── Pause button ────────────────────────────────────────────── */
-  if (pauseBtn) {
-    pauseBtn.addEventListener('click', () => {
-      icState.userPaused = !icState.userPaused;
-      icState.paused     = icState.userPaused;
-      if (!icState.userPaused) icState.snapping = false;
-      pauseBtn.setAttribute('aria-pressed', String(icState.userPaused));
-    });
-  }
-
-  /* ── Click original cards ─────────────────────────────────────── */
-  track.addEventListener('click', (e) => {
-    const card = e.target.closest('.inline-jacket-card:not([aria-hidden])');
-    if (!card) return;
-    selectJacket(card.dataset.jacket);
-  });
-
-  /* ── Keyboard on original cards ──────────────────────────────── */
-  track.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    const card = e.target.closest('.inline-jacket-card:not([aria-hidden])');
-    if (!card) return;
-    e.preventDefault();
-    selectJacket(card.dataset.jacket);
-  });
-
-  /* ── Touch: pause while finger is down ──────────────────────── */
-  carousel.addEventListener('touchstart',  () => { icState.paused = true; },
-    { passive: true });
-  carousel.addEventListener('touchend',    () => {
-    if (!icState.userPaused && !icState.snapping) icState.paused = false;
-  }, { passive: true });
-  carousel.addEventListener('touchcancel', () => {
-    if (!icState.userPaused && !icState.snapping) icState.paused = false;
-  }, { passive: true });
-}
-
-
-
 
 /* -------------------------------------------------------------------
    INIT
@@ -924,7 +980,7 @@ function init() {
   selectedJacketId = startId;
   currentViewIndex = 0;
 
-  /* Preload the URL-specified jacket immediately (amendment 9) */
+  /* Preload the URL-specified jacket immediately */
   preloadFromURL();
 
   renderControls();
@@ -954,7 +1010,7 @@ function init() {
     });
   }
 
-  initInlineCarousel();
+  initDriftWall();
 }
 
 init();

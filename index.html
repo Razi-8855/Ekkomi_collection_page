@@ -7,7 +7,7 @@
   <meta name="description" content="Nocturne — the first collection from Ekkomi. Five impulses. Five jackets." />
   <title>Ekkomi — Nocturne</title>
   <link rel="icon" type="image/png" href="assets/ekkomi_favicon.png" />
-  <link rel="stylesheet" href="styles.css?v=all_shots" />
+  <link rel="stylesheet" href="styles.css?v=driftwall" />
 </head>
 
 <body>
@@ -22,24 +22,29 @@
   </header>
 
   <main id="top">
-    <section class="intro section" aria-labelledby="nocturne-title">
-      <p class="eyebrow">The first collection</p>
-      <h1 id="nocturne-title">Nocturne</h1>
-      <p class="intro-statement">Five impulses. Five jackets. A collection that reconsiders what we&#8217;ve been taught
-        to keep in check.</p>
-      <!-- role="tablist" — JS renders role="tab" buttons inside -->
-      <nav class="impulse-nav" role="tablist" aria-label="Choose a Nocturne jacket" id="impulseNav"></nav>
-    </section>
-
     <!-- ============================================================
-         PRODUCT CAROUSEL STRIP — infinite marquee + two-way tab sync
-         JS populates #inlineCarouselTrack with original + clone cards.
+         HERO SECTION: 3D PERSPECTIVE DRIFT WALL + OVERLAID COPY
+         Photos from jackets_original drifting continuously, lifting on hover
          ============================================================ -->
-    <section class="inline-carousel-section" aria-label="Nocturne jackets" id="inlineCarouselSection">
-      <div class="inline-carousel" id="inlineCarousel">
-        <div class="inline-carousel-track" id="inlineCarouselTrack" role="list"></div>
+    <section class="hero-section" id="heroSection" aria-labelledby="nocturne-title">
+      <div class="hero__wall" id="heroDriftWall" aria-label="Perspective wall of Nocturne collection photos drifting past"></div>
+
+      <div class="hero__content">
+        <p class="eyebrow hero-eyebrow">The first collection</p>
+        <h1 class="hero-title" id="nocturne-title">Nocturne</h1>
+        <p class="intro-statement hero-statement">Five impulses. Five jackets. A collection that reconsiders what we&#8217;ve been taught to keep in check.</p>
+        <a class="hero-explore-btn" href="#collection" aria-label="Explore the Nocturne collection">
+          Explore collection <span class="hero-arrow" aria-hidden="true">&darr;</span>
+        </a>
       </div>
     </section>
+
+    <!-- Collection Impulse Navigation Bar -->
+    <div class="collection-nav-bar" id="collectionNavBar">
+      <div class="section">
+        <nav class="impulse-nav" role="tablist" aria-label="Choose a Nocturne jacket" id="impulseNav"></nav>
+      </div>
+    </div>
 
 
     <!-- role="tabpanel" — controlled by the tablist above -->
@@ -111,7 +116,7 @@
     <span class="footer-tagline">Made to be discovered.</span>
   </footer>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=driftwall"></script>
 </body>
 
 </html>

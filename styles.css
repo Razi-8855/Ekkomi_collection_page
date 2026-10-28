@@ -352,236 +352,286 @@ h1 {
 
 
 /* -------------------------------------------------------------------
-   INLINE PRODUCT CAROUSEL STRIP — marquee with two-way tab sync
-   Architecture:
-   • .inline-carousel: overflow:hidden, edge fades via ::before/::after
-   • .inline-carousel-track: flex row, position driven by JS rAF (translateX)
-     Holds original 5 cards + aria-hidden clone set → seamless -50% loop
-   • Cards: 3/4 aspect-ratio portrait with footer label bar
-   • Hover lift: transform only — no layout shift
-   • Pause: JS sets icState.paused; CSS .is-paused class for cursor
+   HERO SECTION — Perspective Drift Wall + Overlaid Brand Copy
    ------------------------------------------------------------------- */
 
-/* Section wrapper — bleeds to viewport edges */
-.inline-carousel-section {
-  margin: 0 calc(clamp(1.25rem, 6vw, 7rem) * -1);
-  padding-top:    clamp(1.5rem, 3vw, 2.5rem);
-  padding-bottom: clamp(2rem,   4vw, 3.5rem);
+.hero-section {
   position: relative;
-}
-
-/* ── Header row: "Hover to pause" hint + pause button ─────────── */
-.ic-header {
+  width: 100%;
+  height: 90vh;
+  min-height: 620px;
+  max-height: 940px;
+  background: #080706;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding: 0 clamp(1.25rem, 6vw, 7rem);
-  margin-bottom: clamp(1rem, 2vw, 1.75rem);
-}
-
-.ic-hint {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  color: var(--color-muted);
-  opacity: .75;
-}
-.ic-hint-touch   { display: none;   }
-.ic-hint-desktop { display: inline; }
-@media (hover: none) {
-  .ic-hint-touch   { display: inline; }
-  .ic-hint-desktop { display: none;   }
-}
-
-/* Pause / play toggle button */
-.ic-pause-btn {
-  height: 30px;
-  width:  30px;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  background: transparent;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
-  letter-spacing: 0;
-  color: var(--color-muted);
-  transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast);
-  flex-shrink: 0;
-}
-.ic-pause-btn:hover {
-  background: var(--color-accent);
-  color: var(--color-accent-text);
-  border-color: var(--color-accent);
-}
-.ic-pause-btn .ic-play-icon  { display: none;   }
-.ic-pause-btn .ic-pause-icon { display: inline; }
-.ic-pause-btn[aria-pressed="true"] .ic-play-icon  { display: inline; }
-.ic-pause-btn[aria-pressed="true"] .ic-pause-icon { display: none;   }
-
-.ic-pause-btn:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
 }
 
-/* ── Scroll viewport — clips the marquee + faded edges ─────────── */
-.inline-carousel {
-  position: relative;
-  overflow: hidden;
-  /* Room for hover lift shadow */
-  padding-top:    0.75rem;
-  padding-bottom: 1rem;
-}
-
-/* Soft edge fades (same technique as .jacket-carousel) */
-.inline-carousel::before,
-.inline-carousel::after {
-  content: '';
+/* ── Drift Wall Perspective Stage ─────────────────────────────── */
+.hero__wall {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(3rem, 8vw, 7rem);
-  z-index: 2;
-  pointer-events: none;
-}
-.inline-carousel::before {
-  left: 0;
-  background: linear-gradient(to right, var(--color-background) 0%, transparent 100%);
-}
-.inline-carousel::after {
-  right: 0;
-  background: linear-gradient(to left, var(--color-background) 0%, transparent 100%);
-}
-
-/* ── Marquee track — JS sets transform via rAF ─────────────────── */
-.inline-carousel-track {
-  display: flex;
-  flex-wrap: nowrap;
-  /* No CSS gap — card margin-right is used so -50% loop math works */
-  width: max-content;
-  will-change: transform;
-  /* Leading indent aligns first card with page content */
-  padding-left: clamp(1.25rem, 6vw, 7rem);
-}
-
-/* ── Individual jacket cards ────────────────────────────────────── */
-.inline-jacket-card {
-  flex: none;
-  width: clamp(195px, 27vw, 305px);
-  aspect-ratio: 3 / 4;
-  margin-right: clamp(.85rem, 1.4vw, 1.2rem);
-  background: transparent;
-  border: none;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  transition: transform var(--motion), box-shadow var(--motion);
-}
-
-.inline-jacket-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 38px rgba(64, 48, 44, .10);
+  inset: 0;
   z-index: 1;
 }
 
-/* Active state — subtle lift + faint shadow, no box */
-.inline-jacket-card.is-active {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(64, 48, 44, .08);
+.drift-wall {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  perspective: var(--dw-perspective, 1100px);
+  perspective-origin: 50% 50%;
+  --dw-tile-w: 220px;
+  --dw-tile-h: 300px;
+  --dw-gap: 16px;
+  --dw-radius: 8px;
+  --dw-lift: 72px;
+  --dw-dim: 0.48;
+  --dw-gray: 0;
+  --dw-overlay: #080706;
+  --dw-edge: 38%;
+  -webkit-mask-image:
+    radial-gradient(ellipse 78% 82% at 50% 50%, #000 var(--dw-edge), transparent 100%),
+    linear-gradient(to top, #000 var(--dw-edge), transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(ellipse 78% 82% at 50% 50%, #000 var(--dw-edge), transparent 100%),
+    linear-gradient(to top, #000 var(--dw-edge), transparent 100%);
+  mask-composite: intersect;
 }
 
-/* Image area fills upper portion */
-.inline-card-img {
-  flex: 1;
-  overflow: hidden;
-  background: transparent;
+.drift-wall__plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
-.inline-card-img img {
+
+.drift-wall__col {
+  position: relative;
+  width: calc(var(--dw-tile-w) + var(--dw-gap));
+  transform-style: preserve-3d;
+}
+
+.drift-wall__track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.drift-wall__tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(var(--dw-tile-h) + var(--dw-gap));
+  flex: 0 0 auto;
+  outline: none;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.drift-wall__inner {
+  position: absolute;
+  inset: calc(var(--dw-gap) / 2);
+  display: block;
+  border-radius: var(--dw-radius);
+  overflow: hidden;
+  background: #140f0d;
+  opacity: var(--dw-dim);
+  transform: translateZ(0);
+  pointer-events: none;
+  transition:
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.drift-wall__tile img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
   display: block;
-  transition: transform 0.6s cubic-bezier(.2, .7, .2, 1);
-}
-.inline-jacket-card:hover .inline-card-img img {
-  transform: scale(1.04);
+  filter: grayscale(var(--dw-gray)) saturate(0.92);
+  transition: filter 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-/* Footer label bar: "04 / AUDACITY" · "DEEP MUSTARD" */
-.inline-card-label {
-  flex-shrink: 0;
-  padding: .75rem 0;
-  border-top: none;
+.drift-wall__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--dw-overlay);
+  opacity: 0.46;
+  pointer-events: none;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.drift-wall__badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: rgba(14, 11, 9, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #FAF6F1;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: .4rem;
-  background: transparent;
-}
-.ic-label-left {
-  font-family: var(--font-sans);
-  font-size: 9.5px;
-  font-weight: normal;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  color: var(--color-text);
-  white-space: nowrap;
-}
-.ic-label-right {
-  font-family: var(--font-sans);
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--color-muted);
-  white-space: nowrap;
 }
 
-/* Active dot indicator — replaces border box */
-.inline-jacket-card.is-active .inline-card-label::after {
-  content: '';
-  display: block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  flex-shrink: 0;
+.drift-wall__tile.is-active .drift-wall__inner,
+.drift-wall__tile:focus-visible .drift-wall__inner {
+  opacity: 1;
+  transform: translateZ(var(--dw-lift));
+  box-shadow:
+    0 28px 65px -15px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
-/* ── Reduced motion: stop rAF loop, show as static scrollable row ─ */
+.drift-wall__tile.is-active img,
+.drift-wall__tile:focus-visible img {
+  filter: grayscale(0) saturate(1.08);
+}
+
+.drift-wall__tile.is-active .drift-wall__overlay,
+.drift-wall__tile:focus-visible .drift-wall__overlay {
+  opacity: 0;
+}
+
+.drift-wall__tile.is-active .drift-wall__badge,
+.drift-wall__tile:focus-visible .drift-wall__badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Hero Overlaid Content ────────────────────────────────────── */
+.hero__content {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  margin: 0 0 1.25rem;
+  color: var(--ekkomi-gold-muted, #B89B72);
+  letter-spacing: 0.35em;
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.hero-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(3.8rem, 11vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #FAF6F1;
+  text-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.85),
+    0 0 90px rgba(8, 7, 6, 0.75);
+}
+
+.hero-statement {
+  margin: 1.5rem 0 2.25rem;
+  max-width: 620px;
+  font-family: var(--font-script);
+  font-size: clamp(1.25rem, 2.2vw, 1.85rem);
+  line-height: 1.5;
+  color: #EFE3DC;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+}
+
+.hero-explore-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.85rem;
+  border: 1px solid rgba(250, 246, 241, 0.32);
+  border-radius: 40px;
+  background: rgba(18, 14, 12, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FAF6F1;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.hero-explore-btn:hover {
+  background: #FAF6F1;
+  color: #120e0c;
+  border-color: #FAF6F1;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.hero-arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.hero-explore-btn:hover .hero-arrow {
+  transform: translateY(3px);
+}
+
+/* ── Collection Navigation Bar ────────────────────────────────── */
+.collection-nav-bar {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+  z-index: 20;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .inline-carousel {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    cursor: auto;
-  }
-  .inline-carousel::-webkit-scrollbar { display: none; }
-  .inline-carousel-track {
+  .drift-wall__plane,
+  .drift-wall__track {
     will-change: auto;
-    /* Reset any rAF-set transform */
-    transform: none !important;
-  }
-  .inline-jacket-card {
-    scroll-snap-align: start;
   }
 }
 
-/* Mobile */
-@media (max-width: 760px) {
-  .inline-jacket-card {
-    width: 70vw;
+@media (max-width: 768px) {
+  .hero-section {
+    height: 80vh;
+    min-height: 520px;
   }
-  .ic-header {
-    margin-bottom: 1rem;
+  .drift-wall {
+    --dw-tile-w: 160px;
+    --dw-tile-h: 220px;
+    --dw-gap: 12px;
+    --dw-lift: 40px;
+  }
+  .hero-title {
+    font-size: clamp(3rem, 14vw, 5.5rem);
   }
 }
 
