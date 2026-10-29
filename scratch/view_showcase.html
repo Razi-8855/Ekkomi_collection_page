@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><style>body,html{margin:0;padding:0;}</style></head>
+<body>
+<iframe id='f' src='../index.html' style='width:1280px; height:800px; border:none;'></iframe>
+<script>
+window.onload = async () => {
+  await new Promise(r => setTimeout(r, 1200));
+  const f = document.getElementById('f');
+  const win = f.contentWindow;
+  const doc = f.contentDocument;
+  const showcase = doc.getElementById('productShowcase');
+  const offset = 82 + 50 + 16;
+  const targetTop = showcase.getBoundingClientRect().top + win.pageYOffset - offset;
+  win.scrollTo({ top: targetTop, behavior: 'instant' });
+};
+</script>
+</body>
+</html>

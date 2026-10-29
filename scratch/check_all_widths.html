@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id='f' src='../index.html'></iframe>
+<script>
+async function testWidth(w) {
+  const f = document.getElementById('f');
+  f.style.width = w + 'px';
+  f.style.height = '844px';
+  await new Promise(r => setTimeout(r, 1200));
+  
+  const doc = f.contentDocument;
+  const scrollW = doc.documentElement.scrollWidth;
+  const clientW = doc.documentElement.clientWidth;
+  
+  const overflowing = [];
+  doc.querySelectorAll('*').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.right > w + 2) {
+      overflowing.push({
+        tag: el.tagName,
+        cls: (el.className || '').toString().slice(0, 40),
+        id: el.id,
+        right: Math.round(rect.right),
+        diff: Math.round(rect.right - w)
+      });
+    }
+  });
+  
+  console.log('CHECK_' + w + ': clientW=' + clientW + ', scrollW=' + scrollW + ', overflowCount=' + overflowing.length);
+  if (overflowing.length > 0) {
+    console.log('OVERFLOW_SAMPLE_' + w + ':', JSON.stringify(overflowing.slice(0, 5)));
+  }
+}
+
+window.onload = async () => {
+  for (let w of [320, 360, 375, 390, 414, 430]) {
+    await testWidth(w);
+  }
+  console.log('ALL_OVERFLOW_TESTS_FINISHED');
+};
+</script>
+</body>
+</html>

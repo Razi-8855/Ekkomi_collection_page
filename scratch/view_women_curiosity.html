@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><style>body,html{margin:0;padding:0;}</style></head>
+<body>
+<iframe id="f" src="../index.html" style="width:1280px; height:800px; border:none;"></iframe>
+<script>
+window.onload = async () => {
+  await new Promise(r => setTimeout(r, 1200));
+  const f = document.getElementById('f');
+  const win = f.contentWindow;
+  const doc = f.contentDocument;
+
+  // Switch to women and select curiosity
+  doc.getElementById('tab-gender-women').click();
+  await new Promise(r => setTimeout(r, 400));
+  
+  const curiosityPanel = doc.querySelector('#accordionGalleryWomen .ag-panel[data-jacket="women-curiosity"]');
+  if (curiosityPanel) curiosityPanel.click();
+  await new Promise(r => setTimeout(r, 600));
+
+  const gallery = doc.querySelector('.jacket-gallery-container');
+  const offset = 82 + 50 + 10;
+  const targetTop = gallery.getBoundingClientRect().top + win.pageYOffset - offset;
+  win.scrollTo({ top: targetTop, behavior: 'instant' });
+};
+</script>
+</body>
+</html>

@@ -1,695 +1,870 @@
 'use strict';
 
+// Graceful GSAP fallback shim (guarantees accordion works offline, on weak mobile connections, or if CDN blocked)
+if (typeof window !== 'undefined' && typeof window.gsap === 'undefined') {
+  window.gsap = {
+    timeline: function() {
+      return {
+        to: function(targets, vars) {
+          const list = Array.isArray(targets) ? targets : [targets];
+          list.forEach(el => {
+            if (!el || !el.style) return;
+            if (vars.flexGrow !== undefined) el.style.flexGrow = vars.flexGrow;
+            if (vars.opacity !== undefined) el.style.opacity = vars.opacity;
+            if (vars['--ag-gray'] !== undefined) el.style.setProperty('--ag-gray', vars['--ag-gray']);
+            if (vars['--ag-dim'] !== undefined) el.style.setProperty('--ag-dim', vars['--ag-dim']);
+            if (vars.rotateY !== undefined || vars.rotateX !== undefined) {
+              const rx = vars.rotateX || 0;
+              const ry = vars.rotateY || 0;
+              el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+            }
+            if (vars.xPercent !== undefined || vars.yPercent !== undefined || vars.x !== undefined || vars.y !== undefined) {
+              const xp = vars.xPercent !== undefined ? vars.xPercent : 0;
+              const yp = vars.yPercent !== undefined ? vars.yPercent : 0;
+              const x = vars.x || 0;
+              const y = vars.y || 0;
+              el.style.transform = `translate(calc(${xp}% + ${x}px), calc(${yp}% + ${y}px))`;
+            }
+          });
+          return this;
+        },
+        kill: function() {}
+      };
+    }
+  };
+}
+
 /* ===================================================================
    EKKOMI — NOCTURNE COLLECTION
-   Data & Interaction Logic
+   Data & Interaction Logic: Department Tabs + Dynamic Showcase
    =================================================================== */
 
-/* -------------------------------------------------------------------
-   ROOT CAUSE — BLANK JACKET IMAGE PANEL (documented per amendment 1)
-
-   The original selectJacket() set img.src then immediately removed the
-   `.is-changing` class (which held opacity:0). The CSS opacity transition
-   therefore ran while the browser was still fetching / decoding the new
-   JPG → the panel showed blank/white for the entire download time.
-
-   Fix: after swapping img.src, call await img.decode(). This Promise
-   resolves only once the browser has the pixel data ready to paint.
-   The fade-in transition is triggered AFTER decode completes, so the
-   image is never briefly invisible.
-   ------------------------------------------------------------------- */
-
-/* -------------------------------------------------------------------
-   IMAGE PATHS — swap these when production photos arrive.
-
-   Current files (all distinct):
-     assets/collection/nocturne/curiosity/curiosity.jpg   — Dark Navy
-     assets/collection/nocturne/temptation/temptation.jpg — Forest Green
-     assets/collection/nocturne/desire/desire.jpg         — Deep Red
-     assets/collection/nocturne/audacity/audacity.jpg     — Deep Mustard
-     assets/collection/nocturne/insolence/insolence.jpg   — Black
-
-   Recommended spec: 4:5 portrait, ~1200 × 1500 px, JPG ≤ 400 KB.
-   ------------------------------------------------------------------- */
-
 const IMAGE_BASE = 'assets/collection/nocturne';
-const IMG_V = '?v=original';
+const IMG_V = '?v=curiosity_female_v1';
 const imgPath = (folder, file) => `${IMAGE_BASE}/${folder}/${file}${IMG_V}`;
 
-const collectionData = [
+/* -------------------------------------------------------------------
+   MEN'S COLLECTION DATA (5 JACKETS — 100% MALE / STILL GARMENT)
+   ------------------------------------------------------------------- */
+
+const mensJackets = [
   {
-    id: 'curiosity',
+    id: 'men-curiosity',
+    key: 'curiosity',
+    gender: 'men',
     number: '01',
     impulse: 'Curiosity',
     colour: 'Dark Navy',
+    hex: '#1c2838',
     image: imgPath('curiosity', 'curiosity.jpg'),
-    views: [
-      { label: 'Front',      src: imgPath('curiosity', 'curiosity.jpg'),            alt: 'Dark Navy jacket — Curiosity Front' },
-      { label: 'Detail',     src: imgPath('curiosity', 'curiosity_detail.jpg'),     alt: 'Dark Navy jacket — Curiosity Embroidery Detail' },
-      { label: 'Back',       src: imgPath('curiosity', 'curiosity_back.jpg'),       alt: 'Dark Navy jacket — Curiosity Back' },
-      { label: 'Lining',     src: imgPath('curiosity', 'curiosity_lining.jpg'),     alt: 'Dark Navy jacket — Curiosity Illustrated Lining' },
-      { label: 'Lookbook 1', src: imgPath('curiosity', 'curiosity_lookbook_1.jpg'), alt: 'Dark Navy jacket — Curiosity Male Model Lookbook' },
-      { label: 'Lookbook 2', src: imgPath('curiosity', 'curiosity_lookbook_2.jpg'), alt: 'Dark Navy jacket — Curiosity Male Model Side Profile' }
+    label: '01 / CURIOSITY',
+    sublabel: 'DARK NAVY',
+    headline: "They told you curiosity was dangerous. It is also how every new world is found.",
+    narrative: "Curiosity refuses the comfort of the already known. It looks twice, asks another question, follows the detail others might pass by. Rendered in deep navy suede, intricate tone-on-tone embroidery rewards that same instinct — receding into the surface at first glance, then revealing more as light moves across it. A piece made for those who would rather discover than simply be shown.",
+    craft: [
+      { title: "The Material", desc: "Dyed suede gives the jacket its depth, structure and tactile character." },
+      { title: "The Embroidery", desc: "Tone-on-tone embroidery moves quietly across the surface, designed to reward a closer look rather than reveal itself all at once." },
+      { title: "The Inner World", desc: "A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed." }
     ],
-    headline: 'They told you curiosity was dangerous. It is also how every new world is found.',
-    narrative: 'Curiosity refuses the comfort of the already known. It looks twice, asks another question, follows the detail others might pass by. Rendered in deep navy suede, intricate tone-on-tone embroidery rewards that same instinct — receding into the surface at first glance, then revealing more as light moves across it. A piece made for those who would rather discover than simply be shown.',
-    material: 'Dyed suede gives the jacket its depth, structure and tactile character.',
-    embroidery: 'Tone-on-tone embroidery moves quietly across the surface, designed to reward a closer look rather than reveal itself all at once.',
-    innerWorld: 'A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed.',
-    construction: null,   /* ⚠ PENDING — supply construction copy for Curiosity */
-    productLink: '#collection'
+    views: [
+      { label: 'Front Silhouette', src: imgPath('curiosity', 'curiosity.jpg'), alt: "Dark Navy jacket — Men's Curiosity Front Silhouette (Male Model)" },
+      { label: 'Embroidery Detail', src: imgPath('curiosity', 'curiosity_detail.jpg'), alt: "Dark Navy jacket — Men's Curiosity Tone-on-Tone Embroidery Detail (Male Model)" },
+      { label: 'Back Tailoring', src: imgPath('curiosity', 'curiosity_back.jpg'), alt: "Dark Navy jacket — Men's Curiosity Back Construction (Male Model)" },
+      { label: 'Illustrated Lining', src: imgPath('curiosity', 'curiosity_lining.jpg'), alt: "Dark Navy jacket — Men's Curiosity Illustrated Silk Lining (Male Model)" },
+      { label: 'Lookbook Portrait', src: imgPath('curiosity', 'curiosity_lookbook_1.jpg'), alt: "Dark Navy jacket — Men's Curiosity Lookbook Studio Portrait (Male Model)" },
+      { label: 'Lookbook Profile', src: imgPath('curiosity', 'curiosity_lookbook_2.jpg'), alt: "Dark Navy jacket — Men's Curiosity Lookbook Profile View (Male Model)" }
+    ]
   },
   {
-    id: 'temptation',
+    id: 'men-temptation',
+    key: 'temptation',
+    gender: 'men',
     number: '02',
     impulse: 'Temptation',
     colour: 'Forest Green',
+    hex: '#27382b',
     image: imgPath('temptation', 'temptation.jpg'),
-    views: [
-      { label: 'Front',      src: imgPath('temptation', 'temptation.jpg'),            alt: 'Forest Green jacket — Temptation Front Full Body' },
-      { label: 'Detail',     src: imgPath('temptation', 'temptation_detail.jpg'),     alt: 'Forest Green jacket — Temptation Side Embroidery Detail' },
-      { label: 'Back',       src: imgPath('temptation', 'temptation_back.jpg'),       alt: 'Forest Green jacket — Temptation Back Lapel Embroidery' },
-      { label: 'Lookbook 1', src: imgPath('temptation', 'temptation_lookbook_1.jpg'), alt: 'Forest Green jacket — Temptation Male Model Seated' },
-      { label: 'Lookbook 2', src: imgPath('temptation', 'temptation_lookbook_2.jpg'), alt: 'Forest Green jacket — Temptation Male Model Armchair' }
+    label: '02 / TEMPTATION',
+    sublabel: 'FOREST GREEN',
+    headline: "Not every temptation is a weakness. Sometimes it is recognition.",
+    narrative: "Temptation begins with the awareness that something else is possible — a pull toward what lies just beyond the choices already made for us. In deep forest green suede, tone-on-tone embroidery moves between shadow and visibility, creating a surface that reveals itself gradually rather than giving everything away. A piece for the possibility that becomes increasingly difficult to ignore.",
+    craft: [
+      { title: "The Material", desc: "Richly dyed suede gives the jacket its depth of colour, softness and structure." },
+      { title: "The Embroidery", desc: "Intricate tonal embroidery sits close to the colour of the leather, appearing and disappearing with movement and changing light." },
+      { title: "The Inner World", desc: "Inside, the illustrated lining offers a more expressive world than the exterior first suggests. Because restraint does not require the absence of temptation." }
     ],
-    headline: 'Not every temptation is a weakness. Sometimes it is recognition.',
-    narrative: 'Temptation begins with the awareness that something else is possible — a pull toward what lies just beyond the choices already made for us. In deep forest green suede, tone-on-tone embroidery moves between shadow and visibility, creating a surface that reveals itself gradually rather than giving everything away. A piece for the possibility that becomes increasingly difficult to ignore.',
-    material: 'Richly dyed suede gives the jacket its depth of colour, softness and structure.',
-    embroidery: 'Intricate tonal embroidery sits close to the colour of the leather, appearing and disappearing with movement and changing light.',
-    innerWorld: 'Inside, the illustrated lining offers a more expressive world than the exterior first suggests. Because restraint does not require the absence of temptation.',
-    construction: null,   /* ⚠ PENDING — supply construction copy for Temptation */
-    productLink: '#collection'
+    views: [
+      { label: 'Front Silhouette', src: imgPath('temptation', 'temptation.jpg'), alt: "Forest Green jacket — Men's Temptation Front Full Body (Male Model)" },
+      { label: 'Embroidery Detail', src: imgPath('temptation', 'temptation_detail.jpg'), alt: "Forest Green jacket — Men's Temptation Lapel and Embroidery Detail (Male Model)" },
+      { label: 'Back Tailoring', src: imgPath('temptation', 'temptation_back.jpg'), alt: "Forest Green jacket — Men's Temptation Back Collar Embroidery" },
+      { label: 'Lookbook Seated', src: imgPath('temptation', 'temptation_lookbook_1.jpg'), alt: "Forest Green jacket — Men's Temptation Seated Lookbook (Male Model)" },
+      { label: 'Lookbook Armchair', src: imgPath('temptation', 'temptation_lookbook_2.jpg'), alt: "Forest Green jacket — Men's Temptation Armchair Editorial (Male Model)" }
+    ]
   },
   {
-    id: 'desire',
+    id: 'men-desire',
+    key: 'desire',
+    gender: 'men',
     number: '03',
     impulse: 'Desire',
     colour: 'Deep Red',
+    hex: '#662225',
     image: imgPath('desire', 'desire.jpg'),
-    views: [
-      { label: 'Front',       src: imgPath('desire', 'desire.jpg'),             alt: 'Deep Red jacket — Desire Front Seated' },
-      { label: 'Detail',      src: imgPath('desire', 'desire_detail.jpg'),      alt: 'Deep Red jacket — Desire Male Back Embroidery Detail' },
-      { label: 'Back',        src: imgPath('desire', 'desire_back.jpg'),        alt: 'Deep Red jacket — Desire Female Back Embroidery' },
-      { label: 'Lining',      src: imgPath('desire', 'desire_lining.jpg'),      alt: 'Deep Red jacket — Desire Illustrated Inner Lining' },
-      { label: 'Lookbook 1',  src: imgPath('desire', 'desire_lookbook_1.jpg'),  alt: 'Deep Red jacket — Desire Male Model Standing' },
-      { label: 'Lookbook 2',  src: imgPath('desire', 'desire_lookbook_2.jpg'),  alt: 'Deep Red jacket — Desire Male Model Side Angle' },
-      { label: 'Lookbook 3',  src: imgPath('desire', 'desire_lookbook_3.jpg'),  alt: 'Deep Red jacket — Desire Male Model Lounge Chair' },
-      { label: 'Editorial 1', src: imgPath('desire', 'desire_editorial_1.jpg'), alt: 'Deep Red jacket — Desire Female Model Sofa' },
-      { label: 'Editorial 2', src: imgPath('desire', 'desire_editorial_2.jpg'), alt: 'Deep Red jacket — Desire Female Model Close-up' },
-      { label: 'Editorial 3', src: imgPath('desire', 'desire_editorial_3.jpg'), alt: 'Deep Red jacket — Desire Female Model Standing' }
+    label: '03 / DESIRE',
+    sublabel: 'DEEP RED',
+    headline: "Wanting more is not always greed. Sometimes it is vision.",
+    narrative: "Desire is the instinct that refuses to be satisfied by what is already there. It begins with recognition — of what could be, of what is missing, of what feels worth moving toward — and turns that recognition into intent. Rendered in deep red suede, the jacket carries that tension between restraint and appetite. Tone-on-tone embroidery moves through the surface in shifting fragments, revealing itself gradually as light catches the garment and then recedes again.",
+    craft: [
+      { title: "The Material", desc: "Deeply dyed suede gives the jacket its richness, structure and tactile presence." },
+      { title: "The Embroidery", desc: "Tone-on-tone embroidery is integrated into the surface of the garment, allowing pattern and texture to emerge gradually as the light changes." },
+      { title: "The Inner World", desc: "A richly illustrated lining sits in deliberate contrast to the controlled exterior. Because desire does not have to announce itself to be felt." }
     ],
-    headline: 'Wanting more is not always greed. Sometimes it is vision.',
-    narrative: 'Desire is the instinct that refuses to be satisfied by what is already there. It begins with recognition — of what could be, of what is missing, of what feels worth moving toward — and turns that recognition into intent. There is nothing passive about it. Rendered in deep red suede, the jacket carries that tension between restraint and appetite. Tone-on-tone embroidery moves through the surface in shifting fragments, revealing itself gradually as light catches the garment and then recedes again. Sensual without spectacle. Expressive without surrendering restraint.',
-    material: 'Deeply dyed suede gives the jacket its richness, structure and tactile presence.',
-    embroidery: 'Tone-on-tone embroidery is integrated into the surface of the garment, allowing pattern and texture to emerge gradually as the light changes.',
-    innerWorld: 'A richly illustrated lining sits in deliberate contrast to the controlled exterior. Because desire does not have to announce itself to be felt.',
-    construction: null,   /* ⚠ PENDING — supply construction copy for Desire */
-    productLink: '#collection'
+    views: [
+      { label: 'Front Silhouette', src: imgPath('desire', 'desire.jpg'), alt: "Deep Red jacket — Men's Desire Front Seated (Male Model)" },
+      { label: 'Embroidery Detail', src: imgPath('desire', 'desire_detail.jpg'), alt: "Deep Red jacket — Men's Desire Back Tonal Embroidery (Male Model)" },
+      { label: 'Illustrated Lining', src: imgPath('desire', 'desire_lining.jpg'), alt: "Deep Red jacket — Men's Desire Illustrated Silk Lining" },
+      { label: 'Lookbook Standing', src: imgPath('desire', 'desire_lookbook_1.jpg'), alt: "Deep Red jacket — Men's Desire Full Standing (Male Model)" },
+      { label: 'Lookbook Profile', src: imgPath('desire', 'desire_lookbook_2.jpg'), alt: "Deep Red jacket — Men's Desire Side Angle (Male Model)" },
+      { label: 'Lookbook Lounge', src: imgPath('desire', 'desire_lookbook_3.jpg'), alt: "Deep Red jacket — Men's Desire Lounge Chair (Male Model)" }
+    ]
   },
   {
-    id: 'audacity',
+    id: 'men-audacity',
+    key: 'audacity',
+    gender: 'men',
     number: '04',
     impulse: 'Audacity',
     colour: 'Deep Mustard',
-    image: imgPath('audacity', 'audacity.jpg'),
-    views: [
-      { label: 'Front',       src: imgPath('audacity', 'audacity.jpg'),             alt: 'Deep Mustard jacket — Audacity Front View' },
-      { label: 'Detail',      src: imgPath('audacity', 'audacity_detail.jpg'),      alt: 'Deep Mustard jacket — Audacity Embroidery Detail' },
-      { label: 'Back',        src: imgPath('audacity', 'audacity_back.jpg'),        alt: 'Deep Mustard jacket — Audacity Back View' },
-      { label: 'Editorial 1', src: imgPath('audacity', 'audacity_editorial_1.jpg'), alt: 'Deep Mustard jacket — Audacity Female Model Seated Portrait' },
-      { label: 'Editorial 2', src: imgPath('audacity', 'audacity_editorial_2.jpg'), alt: 'Deep Mustard jacket — Audacity Female Model with Street Lamp' },
-      { label: 'Lookbook 1',  src: imgPath('audacity', 'audacity_lookbook_1.jpg'),  alt: 'Deep Mustard jacket — Audacity Male Model with Scarf' },
-      { label: 'Lookbook 2',  src: imgPath('audacity', 'audacity_lookbook_2.jpg'),  alt: 'Deep Mustard jacket — Audacity Male Model Front Embroidery' }
+    hex: '#8c6b24',
+    image: imgPath('audacity', 'audacity_lookbook_1.jpg'),
+    label: '04 / AUDACITY',
+    sublabel: 'DEEP MUSTARD',
+    headline: "Audacity is confidence before permission arrives.",
+    narrative: "Audacity is the willingness to move before the world has decided you may. To take the unexpected route, occupy the space available to you — and occasionally the space that was not. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricacy and restraint. A piece that stands apart without turning difference into performance.",
+    craft: [
+      { title: "The Material", desc: "Dyed suede gives the saturated mustard tone both richness and weight, balancing expressive colour with a structured silhouette." },
+      { title: "The Embroidery", desc: "Tone-on-tone embroidery adds complexity without competing with the strength of the colour, revealing itself through texture and light." },
+      { title: "The Inner World", desc: "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the more controlled surface. Because audacity does not end where other people stop looking." }
     ],
-    headline: 'Audacity is confidence before permission arrives.',
-    narrative: 'Audacity is the willingness to move before the world has decided you may. To take the unexpected route, occupy the space available to you — and occasionally the space that was not. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricacy and restraint. A piece that stands apart without turning difference into performance.',
-    material: 'Dyed suede gives the saturated mustard tone both richness and weight, balancing expressive colour with a structured silhouette.',
-    embroidery: 'Tone-on-tone embroidery adds complexity without competing with the strength of the colour, revealing itself through texture and light.',
-    innerWorld: "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the more controlled surface. Because audacity does not end where other people stop looking.",
-    construction: null,   /* ⚠ PENDING — supply construction copy for Audacity */
-    productLink: '#collection'
+    views: [
+      { label: 'Front Silhouette', src: imgPath('audacity', 'audacity_lookbook_1.jpg'), alt: "Deep Mustard jacket — Men's Audacity Styled with Scarf (Male Model)" },
+      { label: 'Chest Embroidery', src: imgPath('audacity', 'audacity_lookbook_2.jpg'), alt: "Deep Mustard jacket — Men's Audacity Front Texture (Male Model)" },
+      { label: 'Embroidery Detail', src: imgPath('audacity', 'audacity_detail.jpg'), alt: "Deep Mustard jacket — Men's Audacity Chest Embroidery (Male Model)" },
+      { label: 'Back Tailoring', src: imgPath('audacity', 'audacity_back.jpg'), alt: "Deep Mustard jacket — Men's Audacity Back View (Male Model)" }
+    ]
   },
   {
-    id: 'insolence',
+    id: 'men-insolence',
+    key: 'insolence',
+    gender: 'men',
     number: '05',
     impulse: 'Insolence',
     colour: 'Black',
+    hex: '#1a1716',
     image: imgPath('insolence', 'insolence.jpg'),
-    views: [
-      { label: 'Front',       src: imgPath('insolence', 'insolence.jpg'),             alt: 'Black jacket — Insolence Male Model Seated' },
-      { label: 'Detail',      src: imgPath('insolence', 'insolence_detail.jpg'),      alt: 'Black jacket — Insolence Male Model Floor Angle' },
-      { label: 'Back',        src: imgPath('insolence', 'insolence_back.jpg'),        alt: 'Black jacket — Insolence Back Shoulder Embroidery' },
-      { label: 'Editorial 1', src: imgPath('insolence', 'insolence_editorial_1.jpg'), alt: 'Black jacket — Insolence Female Model Standing Full-Body' },
-      { label: 'Editorial 2', src: imgPath('insolence', 'insolence_editorial_2.jpg'), alt: 'Black jacket — Insolence Female Model Seated Chair' },
-      { label: 'Editorial 3', src: imgPath('insolence', 'insolence_editorial_3.jpg'), alt: 'Black jacket — Insolence Female Model Side Chair' },
-      { label: 'Editorial 4', src: imgPath('insolence', 'insolence_editorial_4.jpg'), alt: 'Black jacket — Insolence Female Model Front Close-up' }
+    label: '05 / INSOLENCE',
+    sublabel: 'BLACK',
+    headline: "Respect the rule. Question its right to rule you.",
+    narrative: "Insolence begins with discernment. Not the rejection of convention for its own sake, but the confidence to decide which traditions deserve respect — and which have simply become habits of obedience. Rendered in black suede, near-concealed tonal embroidery turns restraint into something more subversive: detail that exists without demanding recognition. Refined, controlled and entirely capable of disobedience.",
+    craft: [
+      { title: "The Material", desc: "Black dyed suede gives the jacket weight, texture and an understated depth that rewards proximity." },
+      { title: "The Embroidery", desc: "Dark tonal embroidery sits almost within the surface itself, becoming visible through shifts in light rather than contrast." },
+      { title: "The Inner World", desc: "The illustrated lining disrupts the restraint of the exterior with a world known most intimately by the wearer. Because what is hidden can still have character." }
     ],
-    headline: 'Respect the rule. Question its right to rule you.',
-    narrative: 'Insolence begins with discernment. Not the rejection of convention for its own sake, but the confidence to decide which traditions deserve respect — and which have simply become habits of obedience. Rendered in black suede, near-concealed tonal embroidery turns restraint into something more subversive: detail that exists without demanding recognition. Refined, controlled and entirely capable of disobedience.',
-    material: 'Black dyed suede gives the jacket weight, texture and an understated depth that rewards proximity.',
-    embroidery: 'Dark tonal embroidery sits almost within the surface itself, becoming visible through shifts in light rather than contrast.',
-    innerWorld: 'The illustrated lining disrupts the restraint of the exterior with a world known most intimately by the wearer. Because what is hidden can still have character.',
-    construction: null,   /* ⚠ PENDING — supply construction copy for Insolence */
-    productLink: '#collection'
+    views: [
+      { label: 'Front Silhouette', src: imgPath('insolence', 'insolence.jpg'), alt: "Black jacket — Men's Insolence Front Silhouette (Male Model Seated)" },
+      { label: 'Embroidery Detail', src: imgPath('insolence', 'insolence_detail.jpg'), alt: "Black jacket — Men's Insolence Subversive Embroidery Detail (Male Model)" },
+      { label: 'Back Tailoring', src: imgPath('insolence', 'insolence_back.jpg'), alt: "Black jacket — Men's Insolence Back Shoulder Seams (Male Model)" }
+    ]
   }
 ];
 
-
 /* -------------------------------------------------------------------
-   UTILITY
+   WOMEN'S COLLECTION DATA (3 JACKETS — 100% FEMALE PHOTOGRAPHY)
    ------------------------------------------------------------------- */
 
-const $ = (s) => document.querySelector(s);
-
-const isReducedMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-const delay = (ms) => new Promise(res => setTimeout(res, ms));
-
-
-/* -------------------------------------------------------------------
-   STATE
-   ------------------------------------------------------------------- */
-
-let selectedJacketId    = null;
-let isTransitioning     = false;
-let currentViewIndex    = 0;
-let isViewTransitioning = false;
-
-
-/* -------------------------------------------------------------------
-   URL SYNC
-   ------------------------------------------------------------------- */
-
-function getJacketFromURL() {
-  const p = new URLSearchParams(window.location.search).get('jacket');
-  return (p && collectionData.some(j => j.id === p)) ? p : null;
-}
-
-function syncURL(id) {
-  const u = new URL(window.location.href);
-  u.searchParams.set('jacket', id);
-  history.replaceState({ jacket: id }, '', u);
-}
-
-
-/* -------------------------------------------------------------------
-   IMAGE PRELOADING
-   ------------------------------------------------------------------- */
-
-function preloadSrc(src) {
-  const img = new Image();
-  img.src = src;
-}
-
-function preloadAdjacent(id) {
-  const i   = collectionData.findIndex(j => j.id === id);
-  const len = collectionData.length;
-  preloadSrc(collectionData[(i - 1 + len) % len].image);
-  preloadSrc(collectionData[(i + 1) % len].image);
-}
-
-/* Preload based on URL param so initial load is instant (amendment 9) */
-function preloadFromURL() {
-  const id   = getJacketFromURL() || 'desire';
-  const item = collectionData.find(j => j.id === id);
-  if (item) {
-    preloadSrc(item.image);
-    preloadViews(item);
+const womensJackets = [
+  {
+    id: 'women-curiosity',
+    key: 'curiosity',
+    gender: 'women',
+    number: '01',
+    impulse: 'Curiosity',
+    colour: 'Dark Navy',
+    hex: '#1c2838',
+    image: imgPath('curiosity', 'curiosity_women_1.jpg'),
+    label: '01 / CURIOSITY',
+    sublabel: 'DARK NAVY · WOMEN',
+    headline: "They told you curiosity was dangerous. It is also how every new world is found.",
+    narrative: "Curiosity refuses the comfort of the already known. Reimagined for the women's silhouette in deep navy suede, intricate tone-on-tone embroidery moves quietly across tailored lines — subtle, restrained, and rewarding a closer look. A piece made for those who would rather discover than simply be shown.",
+    craft: [
+      { title: "The Material", desc: "Dyed navy suede selected for its softness, lightweight drape and refined structure." },
+      { title: "The Embroidery", desc: "Tone-on-tone diamond and floral embroidery contoured across the yoke and collar, catching the light with natural movement." },
+      { title: "The Inner World", desc: "A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed." }
+    ],
+    views: [
+      { label: 'Standing Silhouette', src: imgPath('curiosity', 'curiosity_women_1.jpg'), alt: "Dark Navy jacket — Women's Curiosity Standing Silhouette (Female Model)" },
+      { label: 'Embroidery Detail', src: imgPath('curiosity', 'curiosity_women_2.jpg'), alt: "Dark Navy jacket — Women's Curiosity Tone-on-Tone Embroidery Portrait (Female Model)" },
+      { label: 'Back Tailoring', src: imgPath('curiosity', 'curiosity_women_3.jpg'), alt: "Dark Navy jacket — Women's Curiosity EKKOMI Back Collar Embroidery (Female Model)" },
+      { label: 'Studio Profile', src: imgPath('curiosity', 'curiosity_women_4.jpg'), alt: "Dark Navy jacket — Women's Curiosity Studio Profile on Chair (Female Model)" },
+      { label: 'Editorial Seated', src: imgPath('curiosity', 'curiosity_women_5.jpg'), alt: "Dark Navy jacket — Women's Curiosity Studio Editorial (Female Model)" }
+    ]
+  },
+  {
+    id: 'women-desire',
+    key: 'desire',
+    gender: 'women',
+    number: '02',
+    impulse: 'Desire',
+    colour: 'Deep Red',
+    hex: '#662225',
+    image: imgPath('desire', 'desire_editorial_3.jpg'),
+    label: '02 / DESIRE',
+    sublabel: 'DEEP RED · WOMEN',
+    headline: "Wanting more is not always greed. Sometimes it is vision.",
+    narrative: "Desire is the instinct that refuses to be satisfied by what is already there. Rendered in deep red suede and cut with fluid feminine tailoring, the jacket carries that essential tension between restraint and appetite. Tonal embroidery shifts across the surface, catching the light with movement. Sensual without spectacle. Expressive without surrendering restraint.",
+    craft: [
+      { title: "The Material", desc: "Deeply dyed suede provides richness, supple hand-feel and elegant architectural drape." },
+      { title: "The Embroidery", desc: "Tone-on-tone embroidery integrated across the back and shoulders, emerging gradually as light changes." },
+      { title: "The Inner World", desc: "A richly illustrated lining sits in deliberate contrast to the controlled exterior." }
+    ],
+    views: [
+      { label: 'Standing Silhouette', src: imgPath('desire', 'desire_editorial_3.jpg'), alt: "Deep Red jacket — Women's Desire Standing Portrait (Female Model BEN04159)" },
+      { label: 'Back Embroidery', src: imgPath('desire', 'desire_back.jpg'), alt: "Deep Red jacket — Women's Desire Back Embroidery Detail (Female Model BEN04180)" },
+      { label: 'Evening Lounge', src: imgPath('desire', 'desire_editorial_1.jpg'), alt: "Deep Red jacket — Women's Desire Editorial on Sofa (Female Model BEN04137)" },
+      { label: 'Close Profile', src: imgPath('desire', 'desire_editorial_2.jpg'), alt: "Deep Red jacket — Women's Desire Intimate Close-up (Female Model BEN04149)" }
+    ]
+  },
+  {
+    id: 'women-audacity',
+    key: 'audacity',
+    gender: 'women',
+    number: '03',
+    impulse: 'Audacity',
+    colour: 'Deep Mustard',
+    hex: '#8c6b24',
+    image: imgPath('audacity', 'audacity.jpg'),
+    label: '03 / AUDACITY',
+    sublabel: 'MUSTARD · WOMEN',
+    headline: "Audacity is confidence before permission arrives.",
+    narrative: "Audacity is the willingness to move before the world has decided you may. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricate restraint. Tailored for feminine form, the silhouette stands apart with quiet authority rather than performance.",
+    craft: [
+      { title: "The Material", desc: "Dyed mustard suede balancing saturated warmth with a supple, sculptural silhouette." },
+      { title: "The Embroidery", desc: "Tonal embroidery contours the upper bodice, revealing intricate texture without competing with the colour." },
+      { title: "The Inner World", desc: "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the controlled surface." }
+    ],
+    views: [
+      { label: 'Front Silhouette', src: imgPath('audacity', 'audacity.jpg'), alt: "Deep Mustard jacket — Women's Audacity Front Leaning Silhouette (Female Model BEN04068)" },
+      { label: 'Seated Portrait', src: imgPath('audacity', 'audacity_editorial_1.jpg'), alt: "Deep Mustard jacket — Women's Audacity Seated Portrait (Female Model BEN04058)" },
+      { label: 'Nocturne Scene', src: imgPath('audacity', 'audacity_editorial_2.jpg'), alt: "Deep Mustard jacket — Women's Audacity with Street Lamp (Female Model BEN04099)" }
+    ]
   }
-}
+];
 
+const allCollectionJackets = [...mensJackets, ...womensJackets];
 
 /* -------------------------------------------------------------------
-   GALLERY HELPERS (VIEWS / ANGLES FOR ACTIVE JACKET)
+   STATE & UTILITIES
    ------------------------------------------------------------------- */
 
-function getViewsForItem(item) {
-  if (!item) return [];
-  if (Array.isArray(item.views) && item.views.length > 0) return item.views;
-  return [{ label: 'Front', src: item.image, alt: `${item.colour} jacket — ${item.impulse}` }];
+const isReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let selectedJacketId = 'men-desire';
+let activeDepartment = 'men';
+
+// Expose state for external consumers (e.g. registration modal, telemetry)
+window.currentSelectedJacket = mensJackets[2];
+window.currentSelectedDepartment = 'men';
+
+/* -------------------------------------------------------------------
+   SMOOTH SCROLLING
+   ------------------------------------------------------------------- */
+
+function scrollToShowcase(smooth = true) {
+  const showcase = document.getElementById('productShowcase');
+  if (!showcase) return;
+  const header = document.querySelector('.site-header');
+  const navBar = document.querySelector('.collection-nav-bar');
+  const offset = (header ? header.offsetHeight : 82) + (navBar ? navBar.offsetHeight : 50) + 16;
+  const targetTop = showcase.getBoundingClientRect().top + window.pageYOffset - offset;
+
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: (smooth && !isReducedMotion()) ? 'smooth' : 'auto'
+  });
 }
 
-function preloadViews(item) {
-  if (!item) return;
-  const views = getViewsForItem(item);
-  views.forEach(v => preloadSrc(v.src));
+function scrollToDepartmentHeader(dept, smooth = true) {
+  const targetId = dept === 'men' ? 'mens-department' : 'womens-department';
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const header = document.querySelector('.site-header');
+  const navBar = document.querySelector('.collection-nav-bar');
+  const offset = (header ? header.offsetHeight : 82) + (navBar ? navBar.offsetHeight : 50) + 12;
+  const targetTop = target.getBoundingClientRect().top + window.pageYOffset - offset;
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: (smooth && !isReducedMotion()) ? 'smooth' : 'auto'
+  });
 }
 
-function updateGalleryUI(item) {
-  const views = getViewsForItem(item);
-  const counter = $('#galleryCounter');
-  const pills = $('#galleryPills');
-  const prevBtn = $('#galleryPrevBtn');
-  const nextBtn = $('#galleryNextBtn');
+/* -------------------------------------------------------------------
+   DEPARTMENT TABS (MEN vs WOMEN SEPARATE SECTIONS)
+   ------------------------------------------------------------------- */
 
-  if (views.length <= 1) {
-    if (counter) counter.style.display = 'none';
-    if (pills) {
-      pills.innerHTML = '';
-      pills.style.display = 'none';
+function switchDepartment(dept, { syncJacket = true, scroll = false } = {}) {
+  if (dept !== 'men' && dept !== 'women') return;
+  activeDepartment = dept;
+  window.currentSelectedDepartment = dept;
+  document.body.dataset.activeDepartment = dept;
+
+  const tabMen = document.getElementById('tab-gender-men');
+  const tabWomen = document.getElementById('tab-gender-women');
+  if (tabMen) {
+    tabMen.classList.toggle('is-active', dept === 'men');
+    tabMen.setAttribute('aria-selected', dept === 'men' ? 'true' : 'false');
+  }
+  if (tabWomen) {
+    tabWomen.classList.toggle('is-active', dept === 'women');
+    tabWomen.setAttribute('aria-selected', dept === 'women' ? 'true' : 'false');
+  }
+
+  const mensBlock = document.getElementById('mens-department');
+  const womensBlock = document.getElementById('womens-department');
+
+  if (dept === 'men') {
+    if (womensBlock) {
+      womensBlock.classList.remove('is-active');
+      womensBlock.classList.add('is-hidden');
+      womensBlock.style.display = 'none';
     }
-    if (prevBtn) prevBtn.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'none';
-    return;
+    if (mensBlock) {
+      mensBlock.style.display = 'block';
+      mensBlock.classList.remove('is-hidden');
+      mensBlock.classList.add('is-active');
+      window.accordionMenAPI?.measure();
+    }
+  } else {
+    if (mensBlock) {
+      mensBlock.classList.remove('is-active');
+      mensBlock.classList.add('is-hidden');
+      mensBlock.style.display = 'none';
+    }
+    if (womensBlock) {
+      womensBlock.style.display = 'block';
+      womensBlock.classList.remove('is-hidden');
+      womensBlock.classList.add('is-active');
+      window.accordionWomenAPI?.measure();
+    }
   }
 
-  const currentView = views[currentViewIndex] || views[0];
-
-  if (counter) {
-    counter.style.display = '';
-    const labelStr = currentView && currentView.label ? ` · ${currentView.label}` : '';
-    counter.textContent = `· ${String(currentViewIndex + 1).padStart(2, '0')} / ${String(views.length).padStart(2, '0')}${labelStr}`;
+  if (syncJacket) {
+    // Pick the default/active jacket for this department
+    const targetId = dept === 'men' ? 'men-desire' : 'women-desire';
+    selectJacket(targetId, { scroll, fromDepartmentSwitch: true });
   }
 
-  if (prevBtn) {
-    prevBtn.style.display = '';
-    const prevIdx = (currentViewIndex - 1 + views.length) % views.length;
-    prevBtn.setAttribute('aria-label', `Previous view: ${views[prevIdx].label}`);
-    prevBtn.title = `Previous: ${views[prevIdx].label}`;
+  if (scroll) {
+    scrollToDepartmentHeader(dept);
   }
+}
 
-  if (nextBtn) {
-    nextBtn.style.display = '';
-    const nextIdx = (currentViewIndex + 1) % views.length;
-    nextBtn.setAttribute('aria-label', `Next view: ${views[nextIdx].label}`);
-    nextBtn.title = `Next: ${views[nextIdx].label}`;
-  }
+/* -------------------------------------------------------------------
+   DYNAMIC PRODUCT SHOWCASE (UPDATES IN-PLACE WITHOUT LONG SCROLLING)
+   ------------------------------------------------------------------- */
 
-  if (pills) {
-    pills.style.display = '';
-    pills.innerHTML = views.map((v, i) => `
-      <button
-        class="gallery-indicator-bar${i === currentViewIndex ? ' is-active' : ''}"
-        type="button"
-        role="tab"
-        aria-selected="${i === currentViewIndex}"
-        aria-label="View ${v.label} (${i + 1} of ${views.length})"
-        title="${v.label}"
-        data-view-index="${i}"
-      ><span class="indicator-line" aria-hidden="true"></span><span class="sr-only">${v.label}</span></button>
+function renderShowcase(jacket) {
+  const showcase = document.getElementById('productShowcase');
+  if (!showcase) return;
+
+  // Subtle luxury fade transition
+  showcase.classList.add('is-updating');
+
+  setTimeout(() => {
+    const currentList = jacket.gender === 'men' ? mensJackets : womensJackets;
+    const currentIndex = currentList.findIndex(j => j.id === jacket.id);
+    const prevIndex = (currentIndex - 1 + currentList.length) % currentList.length;
+    const nextIndex = (currentIndex + 1) % currentList.length;
+    const prevJacket = currentList[prevIndex];
+    const nextJacket = currentList[nextIndex];
+
+    const departmentTitle = jacket.gender === 'men' ? "Men's Collection" : "Women's Collection";
+    const carouselId = jacket.gender === 'men' ? 'accordionGalleryMen' : 'accordionGalleryWomen';
+
+    const craftHtml = jacket.craft.map(c => `
+      <div class="craft-item">
+        <dt>${c.title}</dt>
+        <dd>${c.desc}</dd>
+      </div>
     `).join('');
+
+    const firstView = jacket.views[0] || { src: jacket.image, alt: jacket.impulse, label: 'Front Silhouette' };
+
+    const viewsHtml = jacket.views.map((v, i) => `
+      <button class="gallery-view-card${i === 0 ? ' is-active' : ''}"
+              type="button"
+              role="listitem"
+              aria-label="View ${v.label} for ${jacket.impulse}"
+              aria-pressed="${i === 0 ? 'true' : 'false'}"
+              data-jacket-id="${jacket.id}"
+              data-view-index="${i}"
+              data-src="${v.src}"
+              data-alt="${v.alt}"
+              data-label="${v.label}">
+        <div class="view-card__frame">
+          <img class="view-card__img"
+               src="${v.src}"
+               alt="${v.alt}"
+               loading="lazy"
+               width="400"
+               height="600" />
+          <span class="view-card__overlay" aria-hidden="true"></span>
+        </div>
+        <div class="view-card__info">
+          <span class="view-card__index">${String(i + 1).padStart(2, '0')}</span>
+          <span class="view-card__label">${v.label}</span>
+        </div>
+      </button>
+    `).join('');
+
+    showcase.innerHTML = `
+      <div class="section jacket-detail-inner">
+        <!-- Editorial Header: Split Meta & Narrative -->
+        <div class="jacket-editorial-header">
+          <div class="jacket-meta-column">
+            <div class="jacket-meta-header-row">
+              <div class="jacket-collection-eyebrow">
+                <span class="eyebrow-prefix">${departmentTitle}</span>
+                <span class="eyebrow-sep">/</span>
+                <span class="eyebrow-num">${jacket.number}</span>
+              </div>
+              <div class="jacket-quick-nav">
+                <button type="button" class="quick-nav-btn prev-quick-btn" id="prevQuickBtn" aria-label="Previous: ${prevJacket.impulse}" title="Previous jacket">
+                  <span aria-hidden="true">&larr;</span>
+                </button>
+                <span class="quick-nav-counter">${jacket.number} / ${String(currentList.length).padStart(2, '0')}</span>
+                <button type="button" class="quick-nav-btn next-quick-btn" id="nextQuickBtn" aria-label="Next: ${nextJacket.impulse}" title="Next jacket">
+                  <span aria-hidden="true">&rarr;</span>
+                </button>
+              </div>
+            </div>
+            <h3 class="jacket-name" id="showcaseJacketTitle">${jacket.impulse}</h3>
+            <div class="jacket-colour-tag">
+              <span class="colour-swatch" style="background-color: ${jacket.hex};" aria-hidden="true"></span>
+              <span class="colour-name">${jacket.colour}</span>
+            </div>
+          </div>
+
+          <div class="jacket-story-column">
+            <p class="jacket-headline">${jacket.headline}</p>
+            <p class="jacket-narrative">${jacket.narrative}</p>
+
+            <dl class="jacket-craft-list">
+              ${craftHtml}
+            </dl>
+          </div>
+        </div>
+
+        <!-- Luxury Product Gallery -->
+        <div class="jacket-gallery-container" data-gallery-jacket="${jacket.id}">
+          <div class="gallery-section-bar">
+            <h4 class="gallery-heading">Photographic Perspectives</h4>
+            <span class="gallery-counter-tag">${jacket.views.length} Perspectives</span>
+          </div>
+          <div class="jacket-gallery-editorial">
+            <!-- Prominent Main Stage (Large, 2:3 ratio) -->
+            <div class="gallery-stage" id="showcaseStage">
+              <div class="gallery-stage__frame">
+                <img class="gallery-stage__img"
+                     id="showcaseStageImg"
+                     src="${firstView.src}"
+                     alt="${firstView.alt}"
+                     loading="eager"
+                     width="1200"
+                     height="1800" />
+                <div class="gallery-stage__badge">
+                  <span class="badge-indicator" aria-hidden="true"></span>
+                  <span class="stage-caption" id="showcaseStageCaption">${firstView.label}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Views Grid -->
+            <div class="gallery-views-grid" role="list" aria-label="${departmentTitle} ${jacket.impulse} jacket views">
+              ${viewsHtml}
+            </div>
+          </div>
+        </div>
+
+        <!-- Understated Product Navigation (Previous / Next & Carousel Return) -->
+        <nav class="showcase-bottom-nav" aria-label="Jacket navigation">
+          <button type="button" class="showcase-nav-btn prev-jacket-btn" id="prevJacketBtn" aria-label="Previous jacket: ${prevJacket.number} ${prevJacket.impulse}">
+            <span class="nav-arrow" aria-hidden="true">&larr;</span>
+            <span class="nav-label-wrap">
+              <span class="nav-sub">Previous Jacket</span>
+              <span class="nav-jacket-name">${prevJacket.number} &middot; ${prevJacket.impulse}</span>
+            </span>
+          </button>
+
+          <a class="nav-back-link" id="backToCarouselLink" href="#${carouselId}" aria-label="Return to ${departmentTitle} carousel">
+            <span class="arrow-up" aria-hidden="true">&uarr;</span> Back to Carousel
+          </a>
+
+          <button type="button" class="showcase-nav-btn next-jacket-btn" id="nextJacketBtn" aria-label="Next jacket: ${nextJacket.number} ${nextJacket.impulse}">
+            <span class="nav-label-wrap">
+              <span class="nav-sub">Next Jacket</span>
+              <span class="nav-jacket-name">${nextJacket.number} &middot; ${nextJacket.impulse}</span>
+            </span>
+            <span class="nav-arrow" aria-hidden="true">&rarr;</span>
+          </button>
+        </nav>
+      </div>
+    `;
+
+    // Bind thumbnail click events for main stage swapping
+    const stage = document.getElementById('showcaseStage');
+    const stageImg = document.getElementById('showcaseStageImg');
+    const stageCaption = document.getElementById('showcaseStageCaption');
+    const cards = showcase.querySelectorAll('.gallery-view-card');
+
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const src = card.dataset.src;
+        const alt = card.dataset.alt;
+        const label = card.dataset.label;
+
+        cards.forEach(c => {
+          c.classList.remove('is-active');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        card.classList.add('is-active');
+        card.setAttribute('aria-pressed', 'true');
+
+        if (stage && stageImg) {
+          stage.classList.add('is-switching');
+          setTimeout(() => {
+            stageImg.src = src;
+            stageImg.alt = alt;
+            if (stageCaption) stageCaption.textContent = label;
+            stage.classList.remove('is-switching');
+          }, 140);
+        }
+      });
+    });
+
+    // Bind Previous / Next Navigation (Both bottom buttons & top quick buttons)
+    const prevBtn = document.getElementById('prevJacketBtn');
+    const nextBtn = document.getElementById('nextJacketBtn');
+    const prevQuick = document.getElementById('prevQuickBtn');
+    const nextQuick = document.getElementById('nextQuickBtn');
+
+    const handlePrev = (e) => {
+      e.preventDefault();
+      selectJacket(prevJacket.id, { scroll: true });
+    };
+
+    const handleNext = (e) => {
+      e.preventDefault();
+      selectJacket(nextJacket.id, { scroll: true });
+    };
+
+    if (prevBtn) prevBtn.addEventListener('click', handlePrev);
+    if (nextBtn) nextBtn.addEventListener('click', handleNext);
+    if (prevQuick) prevQuick.addEventListener('click', handlePrev);
+    if (nextQuick) nextQuick.addEventListener('click', handleNext);
+
+    // Bind Back to Carousel Link
+    const backLink = document.getElementById('backToCarouselLink');
+    if (backLink) {
+      backLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        scrollToDepartmentHeader(jacket.gender);
+      });
+    }
+
+    // Reveal with subtle fade in
+    showcase.classList.remove('is-updating');
+  }, 160);
+}
+
+/* -------------------------------------------------------------------
+   SELECT JACKET
+   ------------------------------------------------------------------- */
+
+function selectJacket(id, { scroll = false, fromAccordion = false, fromDepartmentSwitch = false } = {}) {
+  const item = allCollectionJackets.find(j => j.id === id);
+  if (!item) return;
+
+  if (item.gender !== activeDepartment) {
+    switchDepartment(item.gender, { syncJacket: false });
   }
-}
 
-
-/* -------------------------------------------------------------------
-   CONTROLS RENDERING
-   Roving tabindex: active tab has tabindex="0", others "-1" (amendment 7).
-   Carousel: original cards + aria-hidden clones (amendment 5).
-   ------------------------------------------------------------------- */
-
-function renderControls() {
-  const nav = $('#impulseNav');
-  if (!nav) return;
-
-  nav.innerHTML = collectionData.map(item =>
-    `<button
-       class="impulse-button${item.id === selectedJacketId ? ' is-active' : ''}"
-       id="tab-${item.id}"
-       data-jacket="${item.id}"
-       type="button"
-       role="tab"
-       aria-selected="${item.id === selectedJacketId}"
-       aria-controls="collection"
-       tabindex="${item.id === selectedJacketId ? '0' : '-1'}"
-     >${item.impulse}</button>`
-  ).join('');
-}
-
-
-
-/* -------------------------------------------------------------------
-   IMAGE FALLBACK (neutral beige block on error)
-   ------------------------------------------------------------------- */
-
-function showFallback(item) {
-  const img  = $('#jacketImage');
-  const fb   = $('#jacketImgFallback');
-  const lbl  = $('#fallbackLabel');
-  if (img) img.style.display = 'none';
-  if (lbl) lbl.textContent = item.impulse;
-  if (fb)  fb.removeAttribute('aria-hidden');
-  $('#jacketStage')?.classList.remove('is-loading');
-}
-
-function hideFallback() {
-  const img = $('#jacketImage');
-  const fb  = $('#jacketImgFallback');
-  if (img) img.style.display = '';
-  if (fb)  fb.setAttribute('aria-hidden', 'true');
-}
-
-
-/* -------------------------------------------------------------------
-   TEXT UPDATES
-   ------------------------------------------------------------------- */
-
-function setText(id, value) {
-  const el = $(id);
-  if (el) el.textContent = value ?? '';
-}
-
-function updateText(item) {
-  const idx = collectionData.indexOf(item);
-  setText('#visualNumber',      String(idx + 1).padStart(2, '0'));
-  setText('#visualImpulse',     item.impulse);
-  setText('#productImpulse',    item.impulse);
-  setText('#productColour',     item.colour);
-  setText('#productHeadline',   item.headline);
-  setText('#productNarrative',  item.narrative);
-  setText('#productMaterial',   item.material);
-  setText('#productEmbroidery', item.embroidery);
-  setText('#productInnerWorld', item.innerWorld);
-
-  /* Construction row: hidden until copy is supplied (amendment 6) */
-  const constrRow = $('#constructionRow');
-  if (constrRow) {
-    constrRow.hidden = !item.construction;
-    if (item.construction) setText('#productConstruction', item.construction);
-  }
-
-  const link = $('#productLink');
-  if (link) {
-    link.href = item.productLink || '#collection';
-    link.setAttribute('aria-label', `View ${item.impulse} jacket`);
-  }
-
-  const img = $('#jacketImage');
-  if (img) img.alt = `${item.colour} jacket — ${item.impulse}`;
-}
-
-
-/* -------------------------------------------------------------------
-   JACKET SELECTION
-
-   Root cause fix (amendment 1):
-   — Fade out: add is-changing, wait 220ms.
-   — Swap src + show skeleton.
-   — await img.decode() → fade-in ONLY after pixels are ready.
-   — Double requestAnimationFrame before removing is-changing so the
-     browser completes the repaint before the transition starts.
-
-   Auto-scroll only from carousel card clicks (amendment 8).
-   ------------------------------------------------------------------- */
-
-async function selectJacket(id, { fromCarousel = false } = {}) {
-  const item = collectionData.find(j => j.id === id);
-  if (!item || id === selectedJacketId || isTransitioning) return;
-
-  isTransitioning  = true;
   selectedJacketId = id;
-  currentViewIndex = 0;
-  syncURL(id);
-  renderControls();  /* update active tab immediately */
-  updateGalleryUI(item);
+  window.currentSelectedJacket = item;
+  document.body.dataset.selectedJacket = id;
 
-  const views = getViewsForItem(item);
-  const activeView = views[0] || { src: item.image, alt: `${item.colour} jacket — ${item.impulse}` };
-
-  const reduced = isReducedMotion();
-  const img     = $('#jacketImage');
-  const stage   = $('#jacketStage');
-  const meta    = $('#productMeta');
-  const content = $('#showcaseContent');
-
-  /* ── Reduced-motion: instant swap, no animation (amendment 10) ── */
-  if (reduced) {
-    if (img) {
-      img.src = activeView.src;
-      img.alt = activeView.alt;
-    }
-    updateText(item);
-    preloadViews(item);
-    isTransitioning = false;
-    return;
-  }
-
-  /* ── Phase 1: fade out ────────────────────────────────────────── */
-  stage?.classList.add('is-changing');
-  meta?.classList.add('is-changing');
-  content?.classList.add('is-changing');
-  await delay(220);   /* let opacity reach ~0 before swapping content */
-
-  /* ── Phase 2: swap src + loading skeleton ─────────────────────── */
-  hideFallback();
-  stage?.classList.add('is-loading');
-
-  if (img) {
-    img.src = activeView.src;
-    img.alt = activeView.alt;
-    try {
-      await img.decode();  /* KEY FIX: wait until browser has pixels ready */
-    } catch (_) {
-      showFallback(item);  /* graceful fallback on load failure */
+  // Sync accordion active panel
+  if (!fromAccordion) {
+    if (item.gender === 'men' && window.accordionMenAPI) {
+      window.accordionMenAPI.setActiveById(id, false);
+    } else if (item.gender === 'women' && window.accordionWomenAPI) {
+      window.accordionWomenAPI.setActiveById(id, false);
     }
   }
 
-  stage?.classList.remove('is-loading');
-  updateText(item);
+  // Render into dynamic showcase
+  renderShowcase(item);
 
-  /* ── Phase 3: fade in ─────────────────────────────────────────── */
-  /* Double rAF ensures the class removal triggers a new CSS transition
-     rather than continuing the interrupted one. */
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      stage?.classList.remove('is-changing');
-      meta?.classList.remove('is-changing');
-      content?.classList.remove('is-changing');
-    });
+  if (scroll) {
+    scrollToShowcase(true);
+  }
+}
+
+/* -------------------------------------------------------------------
+   GENERIC ACCORDION GALLERY INITIALIZER (REUSABLE GSAP ACCORDION)
+   ------------------------------------------------------------------- */
+
+function createAccordionGallery({
+  rootId,
+  items,
+  defaultIndex = 0,
+  expandRatio = 0.52,
+  onSelectJacket
+}) {
+  const root = document.getElementById(rootId);
+  if (!root) return null;
+
+  let activeIndex = defaultIndex >= 0 && defaultIndex < items.length ? defaultIndex : 0;
+  const duration = 0.6;
+  const ease = 'power3.out';
+  const parallax = 0.5;
+  const tilt = 8;
+  const stagger = 0.06;
+  const count = items.length;
+
+  const prefersReduced = () =>
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+
+  root.innerHTML = '';
+
+  const panelEls = [];
+  const mediaEls = [];
+  const barEls = [];
+  const textEls = [];
+  let tl = null;
+  let firstRun = true;
+  let mediaSize = 320;
+
+  items.forEach((item, i) => {
+    const isActive = i === activeIndex;
+    const panel = document.createElement('div');
+    panel.className = `ag-panel${isActive ? ' ag-panel--active' : ''}`;
+    panel.tabIndex = 0;
+    panel.setAttribute('role', 'listitem');
+    panel.setAttribute('aria-label', `${item.impulse} — ${item.colour}`);
+    panel.dataset.index = String(i);
+    panel.dataset.jacket = item.id;
+
+    const frame = document.createElement('span');
+    frame.className = 'ag-panel__frame';
+
+    const media = document.createElement('span');
+    media.className = 'ag-panel__media';
+
+    const img = document.createElement('img');
+    img.src = item.image;
+    img.alt = `${item.colour} jacket — ${item.impulse}`;
+    img.draggable = false;
+    img.loading = 'lazy';
+
+    media.appendChild(img);
+    frame.appendChild(media);
+
+    const overlay = document.createElement('span');
+    overlay.className = 'ag-panel__overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    frame.appendChild(overlay);
+
+    panel.appendChild(frame);
+
+    const label = document.createElement('span');
+    label.className = 'ag-panel__label';
+    label.setAttribute('aria-hidden', 'true');
+
+    const bar = document.createElement('span');
+    bar.className = 'ag-panel__bar';
+    barEls[i] = bar;
+
+    const text = document.createElement('span');
+    text.className = 'ag-panel__text';
+    text.innerHTML = `<span class="ag-label-title">${item.label}</span><span class="ag-label-sub">${item.sublabel}</span>`;
+    textEls[i] = text;
+
+    label.appendChild(bar);
+    label.appendChild(text);
+    panel.appendChild(label);
+
+    panelEls[i] = panel;
+    mediaEls[i] = media;
+    root.appendChild(panel);
   });
 
-  /* Preload adjacent jackets and all views for this jacket */
-  preloadAdjacent(id);
-  preloadViews(item);
+  function applyLayout(animate = true) {
+    if (!panelEls.length) return;
+    const isVert = window.innerWidth <= 768;
+    root.classList.toggle('accordion-gallery--vertical', isVert);
 
-  /* Scroll to detail only from carousel, only when not fully in view (amendment 8) */
-  if (fromCarousel) scrollToDetailIfNeeded();
+    const r = Math.min(Math.max(expandRatio, 0.2), 0.9);
+    const grow = count > 1 ? (r * (count - 1)) / (1 - r) : 1;
 
-  isTransitioning = false;
-}
+    tl?.kill();
+    const dur = animate && !prefersReduced() ? duration : 0;
+    tl = gsap.timeline();
 
+    panelEls.forEach((panel, i) => {
+      if (!panel) return;
+      const isActive = i === activeIndex;
+      panel.classList.toggle('ag-panel--active', isActive);
+      panel.setAttribute('aria-current', isActive ? 'true' : 'false');
 
-/* -------------------------------------------------------------------
-   GALLERY VIEW SELECTION (ANGLE / DETAIL VIEW SWAPPING)
-   ------------------------------------------------------------------- */
+      const media = mediaEls[i];
+      const bar = barEls[i];
+      const text = textEls[i];
 
-async function selectView(index) {
-  const item = collectionData.find(j => j.id === selectedJacketId);
-  if (!item) return;
-  const views = getViewsForItem(item);
-  if (views.length <= 1 || isViewTransitioning || isTransitioning) return;
+      const rot = isActive ? 0 : i < activeIndex ? tilt : -tilt;
+      const rotProp = isVert ? { rotateX: -rot, rotateY: 0 } : { rotateY: rot, rotateX: 0 };
 
-  const total = views.length;
-  const normalizedIndex = ((index % total) + total) % total;
-  if (normalizedIndex === currentViewIndex) return;
+      tl.to(panel, { flexGrow: isActive ? grow : 1, ...rotProp, duration: dur, ease }, 0);
 
-  isViewTransitioning = true;
-  currentViewIndex = normalizedIndex;
-  const view = views[currentViewIndex];
+      if (media) {
+        const drift = Math.max(-1.5, Math.min(1.5, activeIndex - i));
+        const shift = drift * parallax * mediaSize * 0.06;
+        const gray = isActive ? 0 : 1;
+        tl.to(
+          media,
+          {
+            xPercent: -50,
+            yPercent: -50,
+            x: isVert ? 0 : (isActive ? 0 : shift),
+            y: isVert ? (isActive ? 0 : shift) : 0,
+            '--ag-gray': gray,
+            '--ag-dim': isActive ? 0 : 0.35,
+            duration: dur,
+            ease
+          },
+          0
+        );
+      }
 
-  updateGalleryUI(item);
-
-  const img   = $('#jacketImage');
-  const stage = $('#jacketStage');
-
-  if (isReducedMotion()) {
-    if (img) {
-      img.src = view.src;
-      img.alt = view.alt;
-    }
-    isViewTransitioning = false;
-    return;
-  }
-
-  /* Fade out current image */
-  stage?.classList.add('is-changing');
-  await delay(180);
-
-  if (img) {
-    img.src = view.src;
-    img.alt = view.alt;
-    try {
-      await img.decode();
-    } catch (_) {
-      showFallback(item);
-    }
-  }
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      stage?.classList.remove('is-changing');
-      isViewTransitioning = false;
-    });
-  });
-}
-
-function changeView(direction) {
-  const item = collectionData.find(j => j.id === selectedJacketId);
-  if (!item) return;
-  const views = getViewsForItem(item);
-  if (views.length <= 1) return;
-  selectView(currentViewIndex + direction);
-}
-
-
-/* -------------------------------------------------------------------
-   SCROLL HELPER
-   ------------------------------------------------------------------- */
-
-function scrollToDetailIfNeeded() {
-  const section = $('#collection');
-  if (!section) return;
-  const headerH = ($('.site-header')?.offsetHeight ?? 82) + 12;
-  const rect    = section.getBoundingClientRect();
-  const fullyVisible = rect.top >= headerH && rect.bottom <= window.innerHeight;
-  if (!fullyVisible) {
-    window.scrollTo({
-      top: section.offsetTop - headerH,
-      behavior: 'smooth'
-    });
-  }
-}
-
-
-/* -------------------------------------------------------------------
-   PREV / NEXT (JACKETS)
-   ------------------------------------------------------------------- */
-
-function moveSelection(direction) {
-  const i   = collectionData.findIndex(j => j.id === selectedJacketId);
-  const len = collectionData.length;
-  selectJacket(collectionData[(i + direction + len) % len].id);
-}
-
-$('#previousButton')?.addEventListener('click', () => moveSelection(-1));
-$('#nextButton')?.addEventListener('click',     () => moveSelection(1));
-
-
-/* -------------------------------------------------------------------
-   GALLERY NAVIGATION LISTENERS (VIEWS / ANGLES)
-   ------------------------------------------------------------------- */
-
-$('#galleryPrevBtn')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  changeView(-1);
-});
-
-$('#galleryNextBtn')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  changeView(1);
-});
-
-$('#galleryPills')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-view-index]');
-  if (!btn) return;
-  e.preventDefault();
-  const idx = parseInt(btn.dataset.viewIndex, 10);
-  if (!isNaN(idx)) selectView(idx);
-});
-
-/* Touch swipe support on jacket stage */
-const stageEl = $('#jacketStage');
-if (stageEl) {
-  let touchStartX = 0;
-  let touchStartY = 0;
-
-  stageEl.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  stageEl.addEventListener('touchend', (e) => {
-    if (e.changedTouches.length === 1) {
-      const deltaX = e.changedTouches[0].clientX - touchStartX;
-      const deltaY = e.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-        if (deltaX < 0) {
-          changeView(1);
+      if (bar && text) {
+        if (isActive) {
+          tl.to([bar, text], { opacity: 1, x: 0, duration: dur, ease, stagger: prefersReduced() ? 0 : stagger }, 0);
         } else {
-          changeView(-1);
+          tl.to([bar, text], { opacity: 0, x: -14, duration: dur * 0.6, ease }, 0);
         }
       }
-    }
-  }, { passive: true });
-}
+    });
+  }
 
+  const measure = () => {
+    const isVert = window.innerWidth <= 768;
+    root.classList.toggle('accordion-gallery--vertical', isVert);
+    const rect = root.getBoundingClientRect();
+    const total = isVert ? rect.height : rect.width;
+    const gap = isVert ? 8 : 12;
+    const usable = Math.max(total - gap * (count - 1), 120);
+    const size = Math.max(140, usable * Math.min(Math.max(expandRatio, 0.2), 0.9) * 1.22);
+    mediaSize = size;
+    root.style.setProperty('--ag-media-size', `${size}px`);
+    applyLayout(!firstRun);
+  };
 
-/* -------------------------------------------------------------------
-   KEYBOARD — SCOPED TO TABLIST, STAGE & DETAIL
-   Roving tabindex: ArrowLeft/Right moves between tabs or angles.
-   Ignores inputs and elements outside the scoped regions.
-   ------------------------------------------------------------------- */
+  measure();
+  const ro = new ResizeObserver(measure);
+  ro.observe(root);
+  window.addEventListener('resize', measure);
 
-document.addEventListener('keydown', (e) => {
-  /* Ignore when focus is in an editable element */
-  const tag = document.activeElement?.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  applyLayout(!firstRun);
+  firstRun = false;
 
-  const inStage  = !!document.activeElement?.closest('#jacketStage');
-  const inPills  = !!document.activeElement?.closest('#galleryPills');
-  const inNav    = !!document.activeElement?.closest('#impulseNav');
-  const inDetail = !!document.activeElement?.closest('#collection');
-  if (!inStage && !inPills && !inNav && !inDetail) return;
-
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-    e.preventDefault();
-    if (inStage || inPills) {
-      changeView(e.key === 'ArrowLeft' ? -1 : 1);
-    } else {
-      moveSelection(e.key === 'ArrowLeft' ? -1 : 1);
-      /* After renderControls() rebuilds buttons, focus the new active tab */
-      requestAnimationFrame(() => $(`#tab-${selectedJacketId}`)?.focus());
+  function setActive(i, triggerScroll = false) {
+    if (i >= 0 && i < count) {
+      activeIndex = i;
+      applyLayout(true);
+      if (triggerScroll && onSelectJacket) {
+        onSelectJacket(items[i].id);
+      }
     }
   }
-});
 
+  // Event Listeners: expand on hover / focus, select on click
+  panelEls.forEach((panel, i) => {
+    panel.addEventListener('mouseenter', () => setActive(i, false));
+    panel.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActive(i, false);
+      if (onSelectJacket) {
+        onSelectJacket(items[i].id);
+      }
+    });
+    panel.addEventListener('focus', () => setActive(i, false));
+    panel.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setActive(i, false);
+        if (onSelectJacket) {
+          onSelectJacket(items[i].id);
+        }
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = (i + 1) % count;
+        setActive(next, false);
+        panelEls[next]?.focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = (i - 1 + count) % count;
+        setActive(prev, false);
+        panelEls[prev]?.focus();
+      }
+    });
+  });
+
+  return {
+    setActiveById: (id, triggerScroll = false) => {
+      const idx = items.findIndex(j => j.id === id);
+      if (idx >= 0 && idx !== activeIndex) {
+        setActive(idx, triggerScroll);
+      }
+    },
+    measure: () => {
+      measure();
+    }
+  };
+}
 
 /* -------------------------------------------------------------------
-   DELEGATED CLICK — tabs + carousel (clones included via delegation)
-   ------------------------------------------------------------------- */
-
-document.addEventListener('click', (e) => {
-  const ctrl = e.target.closest('[data-jacket]');
-  if (!ctrl) return;
-  const fromCarousel = !!e.target.closest('#jacketCarousel');
-  selectJacket(ctrl.dataset.jacket, { fromCarousel });
-});
-
-
-
-
-/* -------------------------------------------------------------------
-   3D PERSPECTIVE DRIFT WALL
-   Replaces the sliding carousel in the hero section.
-   Drifts continuous columns of jacket photos from jackets_original,
-   lifting tiles on hover with smooth 3D perspective and mouse parallax.
-   Clicking a tile selects that jacket in the collection showcase.
+   3D PERSPECTIVE DRIFT WALL (HERO)
    ------------------------------------------------------------------- */
 
 const wallTiles = [
-  { image: 'jackets_original/resized_BEN03137.webp', title: 'Curiosity · Dark Navy', jacket: 'curiosity' },
-  { image: 'jackets_original/resized_BEN03166.webp', title: 'Curiosity · Angle View', jacket: 'curiosity' },
-  { image: 'jackets_original/resized_BEN03202.webp', title: 'Curiosity · Male Model', jacket: 'curiosity' },
-  { image: 'jackets_original/resized_BEN04014.webp', title: 'Temptation · Forest Green', jacket: 'temptation' },
-  { image: 'assets/collection/nocturne/temptation/temptation_lookbook_1.jpg', title: 'Temptation · Seated', jacket: 'temptation' },
-  { image: 'jackets_original/resized_BEN03324.webp', title: 'Desire · Deep Red', jacket: 'desire' },
-  { image: 'jackets_original/resized_BEN03515.webp', title: 'Desire · Lounge Chair', jacket: 'desire' },
-  { image: 'assets/collection/nocturne/desire/desire_editorial_1.jpg', title: 'Desire · Editorial', jacket: 'desire' },
-  { image: 'jackets_original/resized_BEN03619.webp', title: 'Audacity · Deep Mustard', jacket: 'audacity' },
-  { image: 'jackets_original/resized_BEN03655.webp', title: 'Audacity · Embroidery Detail', jacket: 'audacity' },
-  { image: 'jackets_original/resized_BEN03767.webp', title: 'Audacity · Looking Away', jacket: 'audacity' },
-  { image: 'jackets_original/resized_BEN03806.webp', title: 'Audacity · Front View', jacket: 'audacity' },
-  { image: 'jackets_original/resized_BEN04053.webp', title: 'Insolence · Black', jacket: 'insolence' },
-  { image: 'jackets_original/resized_BEN04058.webp', title: 'Insolence · Sunglasses', jacket: 'insolence' },
-  { image: 'jackets_original/resized_BEN04068.webp', title: 'Insolence · Side Profile', jacket: 'insolence' },
-  { image: 'jackets_original/resized_BEN04099.webp', title: 'Insolence · Female Model', jacket: 'insolence' },
-  { image: 'jackets_original/resized_DSC04253.webp', title: 'Nocturne · Craftsmanship', jacket: 'curiosity' },
-  { image: 'assets/collection/nocturne/curiosity/curiosity_lookbook_1.jpg', title: 'Curiosity · Full Body', jacket: 'curiosity' },
-  { image: 'assets/collection/nocturne/temptation/temptation_lookbook_2.jpg', title: 'Temptation · Armchair', jacket: 'temptation' },
-  { image: 'assets/collection/nocturne/desire/desire_lookbook_2.jpg', title: 'Desire · Side Angle', jacket: 'desire' }
+  { image: 'jackets_original/resized_BEN03137.webp', title: 'Curiosity · Dark Navy Back', jacket: 'men-curiosity' },
+  { image: 'jackets_original/resized_BEN03166.webp', title: 'Curiosity · Navy Profile (Men)', jacket: 'men-curiosity' },
+  { image: 'jackets_original/resized_BEN03202.webp', title: 'Curiosity · Male Model Navy', jacket: 'men-curiosity' },
+  { image: 'jackets_original/resized_BEN03655.webp', title: 'Temptation · Forest Green Suede', jacket: 'men-temptation' },
+  { image: 'assets/collection/nocturne/temptation/temptation.jpg', title: 'Temptation · Forest Green (Men)', jacket: 'men-temptation' },
+  { image: 'jackets_original/resized_BEN03806.webp', title: 'Desire · Deep Red Suede', jacket: 'men-desire' },
+  { image: 'jackets_original/resized_BEN03515.webp', title: 'Desire · Deep Red Male Standing', jacket: 'men-desire' },
+  { image: 'jackets_original/resized_BEN03619.webp', title: 'Desire · Red Tonal Embroidery (Men)', jacket: 'men-desire' },
+  { image: 'jackets_original/resized_BEN03767.webp', title: 'Desire · Deep Red Portrait (Men)', jacket: 'men-desire' },
+  { image: 'assets/collection/nocturne/desire/desire_editorial_3.jpg', title: 'Desire · Women’s Standing Portrait', jacket: 'women-desire' },
+  { image: 'assets/collection/nocturne/audacity/audacity_editorial_1.jpg', title: 'Audacity · Women’s Seated Portrait', jacket: 'women-audacity' },
+  { image: 'assets/collection/nocturne/audacity/audacity_lookbook_1.jpg', title: 'Audacity · Deep Mustard Suede (Men)', jacket: 'men-audacity' },
+  { image: 'jackets_original/resized_BEN03893.webp', title: 'Audacity · Deep Mustard with Scarf', jacket: 'men-audacity' },
+  { image: 'jackets_original/resized_BEN03307.webp', title: 'Insolence · Black Suede (Men)', jacket: 'men-insolence' },
+  { image: 'jackets_original/resized_BEN03324.webp', title: 'Insolence · Male Model Seated', jacket: 'men-insolence' }
 ];
 
 function initDriftWall() {
@@ -709,84 +884,79 @@ function initDriftWall() {
   const speed = 28;
   const direction = 'up';
   const variance = 0.4;
-  const parallax = 0.5;
-  const lift = 72;
-  const fade = 0.55;
-  const dim = 0.48;
-  const overlayColor = '#080706';
+  const autoPlay = true;
 
-  let containerHeight = container.offsetHeight || 640;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Distribute tiles across 5 columns
-  const columnItems = Array.from({ length: columns }, () => []);
-  wallTiles.forEach((tile, i) => {
-    columnItems[i % columns].push(tile);
-  });
-
-  const unit = tileHeight + gap;
-  const getColumnMeta = (col) => {
-    const copyHeight = Math.max(unit, col.length * unit);
-    const copies = Math.max(2, Math.ceil((containerHeight * 1.6) / copyHeight) + 1);
-    return { copyHeight, copies };
-  };
-
-  let columnMeta = columnItems.map(col => getColumnMeta(col));
-
-  const columnFactor = (index, v) => {
-    const pseudo = ((index * 0.6180339887 + 0.35) % 1) * 2 - 1;
-    return 1 + v * pseudo;
-  };
-
-  const dirSign = direction === 'up' ? 1 : -1;
-  const baseVelocities = columnItems.map((_, c) => {
-    const altSign = c % 2 === 0 ? 1 : -1;
-    return speed * columnFactor(c, variance) * dirSign * altSign;
-  });
-
-  const offsets = columnMeta.map((meta, c) => meta.copyHeight * ((c * 0.37) % 1));
-  const velocities = columnItems.map(() => 0);
-
-  // Build DOM
   const root = document.createElement('div');
-  root.className = `drift-wall${reduced ? ' drift-wall--reduced' : ''}`;
+  root.className = 'drift-wall';
   root.style.setProperty('--dw-tile-w', `${tileWidth}px`);
   root.style.setProperty('--dw-tile-h', `${tileHeight}px`);
   root.style.setProperty('--dw-gap', `${gap}px`);
   root.style.setProperty('--dw-radius', `${radius}px`);
-  root.style.setProperty('--dw-perspective', `${perspective}px`);
-  root.style.setProperty('--dw-lift', `${lift}px`);
-  root.style.setProperty('--dw-dim', dim);
-  root.style.setProperty('--dw-gray', 0);
-  root.style.setProperty('--dw-overlay', overlayColor);
-  root.style.setProperty('--dw-edge', `${Math.max(0, (1 - fade) * 100)}%`);
 
   const plane = document.createElement('div');
   plane.className = 'drift-wall__plane';
   root.appendChild(plane);
 
-  const trackEls = [];
+  const colPools = [];
+  const colElements = [];
+  const tracks = [];
+  const itemHeight = tileHeight + gap;
 
-  columnItems.forEach((col, c) => {
-    const meta = columnMeta[c];
-    const colEl = document.createElement('div');
-    colEl.className = 'drift-wall__col';
-    colEl.dataset.col = String(c);
+  for (let c = 0; c < columns; c++) {
+    const col = document.createElement('div');
+    col.className = 'drift-wall__col';
+    const pool = [];
+    for (let i = 0; i < wallTiles.length; i++) {
+      if ((i + c) % columns === 0 || pool.length < 3) {
+        pool.push(wallTiles[(i * 3 + c * 2) % wallTiles.length]);
+      }
+    }
+    colPools.push(pool);
 
     const track = document.createElement('div');
     track.className = 'drift-wall__track';
-    trackEls[c] = track;
+    col.appendChild(track);
+    plane.appendChild(col);
+    colElements.push(col);
+    tracks.push(track);
+  }
 
-    for (let copy = 0; copy < meta.copies; copy++) {
-      col.forEach((item, itemIdx) => {
-        const tileId = `${c}-${copy}-${itemIdx}`;
+  container.innerHTML = '';
+  container.appendChild(root);
+
+  const colOffsets = new Array(columns).fill(0);
+  const colSpeeds = [];
+  for (let c = 0; c < columns; c++) {
+    const mid = (columns - 1) / 2;
+    const dist = Math.abs(c - mid) / (mid || 1);
+    const mod = 1 - dist * variance;
+    colSpeeds.push(speed * Math.max(mod, 0.45));
+    colOffsets[c] = (c * itemHeight * 0.45) % (colPools[c].length * itemHeight);
+  }
+
+  const trackHeights = new Array(columns).fill(0);
+  const activeTileEls = [];
+
+  function fillTracks() {
+    const rootH = root.clientHeight || 700;
+    const renderH = rootH + itemHeight * 5;
+
+    for (let c = 0; c < columns; c++) {
+      const track = tracks[c];
+      const pool = colPools[c];
+      const curH = trackHeights[c];
+      if (curH >= renderH) continue;
+
+      const needed = Math.ceil((renderH - curH) / itemHeight) + 2;
+      for (let k = 0; k < needed; k++) {
+        const itemIdx = (Math.floor(curH / itemHeight) + k) % pool.length;
+        const item = pool[itemIdx];
+
         const tile = document.createElement('div');
         tile.className = 'drift-wall__tile';
         tile.tabIndex = 0;
         tile.setAttribute('role', 'button');
-        tile.setAttribute('aria-label', `${item.title} — view jacket`);
-        tile.dataset.tileId = tileId;
-        tile.dataset.col = String(c);
+        tile.setAttribute('aria-label', item.title);
         tile.dataset.jacket = item.jacket;
 
         const inner = document.createElement('span');
@@ -795,178 +965,79 @@ function initDriftWall() {
         const img = document.createElement('img');
         img.src = item.image;
         img.alt = item.title;
-        img.loading = 'lazy';
-        img.decoding = 'async';
         img.draggable = false;
-
-        const overlay = document.createElement('span');
-        overlay.className = 'drift-wall__overlay';
-        overlay.setAttribute('aria-hidden', 'true');
-
-        const badge = document.createElement('span');
-        badge.className = 'drift-wall__badge';
-        badge.innerHTML = `<span>${item.jacket.toUpperCase()}</span><span>EXPLORE &rarr;</span>`;
+        img.loading = 'lazy';
 
         inner.appendChild(img);
-        inner.appendChild(overlay);
-        inner.appendChild(badge);
         tile.appendChild(inner);
         track.appendChild(tile);
-      });
+        activeTileEls.push(tile);
+      }
+      trackHeights[c] += needed * itemHeight;
     }
+  }
 
-    colEl.appendChild(track);
-    plane.appendChild(colEl);
-  });
+  fillTracks();
 
-  container.innerHTML = '';
-  container.appendChild(root);
-
-  // Dynamic animation and hover interaction
-  let activeTileEl = null;
-  let hoveredCol = -1;
+  let pointer = { x: 0, y: 0 };
+  let smoothPointer = { x: 0, y: 0 };
+  let targetTilt = tilt;
+  let targetTurn = turn;
+  let curTilt = tilt;
+  let curTurn = turn;
   let wallHovered = false;
-  const pointer = { x: 0, y: 0 };
-  const pointerDamped = { x: 0, y: 0 };
-  let lastTs = null;
-  let rafId = null;
 
-  function applyPlaneTransform(px, py) {
-    plane.style.transform =
-      `translate(-50%, -50%) scale(1.18) ` +
-      `rotateX(${tilt + py}deg) rotateY(${turn + px}deg) rotateZ(${roll}deg) ` +
-      `translateZ(${-depth}px)`;
-  }
-  applyPlaneTransform(0, 0);
+  const updatePlaneTransform = () => {
+    smoothPointer.x += (pointer.x - smoothPointer.x) * 0.08;
+    smoothPointer.y += (pointer.y - smoothPointer.y) * 0.08;
 
-  function setActiveTile(tile) {
-    if (activeTileEl === tile) return;
-    if (activeTileEl) activeTileEl.classList.remove('is-active');
-    activeTileEl = tile;
-    if (tile) {
-      tile.classList.add('is-active');
-      hoveredCol = Number(tile.dataset.col);
-    } else {
-      hoveredCol = -1;
-    }
-  }
+    const mouseTurn = -smoothPointer.x * 6;
+    const mouseTilt = smoothPointer.y * 5;
 
-  function releaseActive() {
-    if (activeTileEl) {
-      activeTileEl.classList.remove('is-active');
-      activeTileEl = null;
-    }
-    hoveredCol = -1;
-  }
+    curTilt += (targetTilt + mouseTilt - curTilt) * 0.08;
+    curTurn += (targetTurn + mouseTurn - curTurn) * 0.08;
 
-  function animate(ts) {
-    if (lastTs === null) lastTs = ts;
-    const dt = Math.min(0.05, Math.max(0, ts - lastTs) / 1000);
-    lastTs = ts;
+    plane.style.transform = `perspective(${perspective}px) translateZ(${depth}px) rotateX(${curTilt}deg) rotateY(${curTurn}deg) rotateZ(${roll}deg)`;
+  };
 
-    const maxTilt = parallax * 8;
-    const targetX = pointer.x * maxTilt;
-    const targetY = -pointer.y * maxTilt;
-    const damp = 1 - Math.exp(-dt / 0.12);
-    pointerDamped.x += (targetX - pointerDamped.x) * damp;
-    pointerDamped.y += (targetY - pointerDamped.y) * damp;
-    applyPlaneTransform(pointerDamped.x, pointerDamped.y);
+  let lastTime = performance.now();
 
-    if (!reduced) {
-      for (let c = 0; c < trackEls.length; c++) {
-        const meta = columnMeta[c];
-        if (!meta) continue;
-        const factor = (wallHovered && hoveredCol === c) ? 0 : 1;
-        const target = baseVelocities[c] * factor;
+  function animateWall(now) {
+    const dt = Math.min((now - lastTime) / 1000, 0.1);
+    lastTime = now;
 
-        const ease = 1 - Math.exp(-dt / (target === 0 ? 0.16 : 0.28));
-        velocities[c] += (target - velocities[c]) * ease;
-        let next = offsets[c] + velocities[c] * dt;
-        next = ((next % meta.copyHeight) + meta.copyHeight) % meta.copyHeight;
-        offsets[c] = next;
-
-        const track = trackEls[c];
-        if (track) {
-          track.style.transform = `translate3d(0, ${-next}px, 0)`;
+    if (autoPlay && !isReducedMotion()) {
+      for (let c = 0; c < columns; c++) {
+        const poolH = colPools[c].length * itemHeight;
+        const dist = colSpeeds[c] * dt;
+        if (direction === 'up') {
+          colOffsets[c] = (colOffsets[c] + dist) % poolH;
+        } else {
+          colOffsets[c] = (colOffsets[c] - dist + poolH) % poolH;
         }
+        tracks[c].style.transform = `translate3d(0, ${-colOffsets[c]}px, 0)`;
       }
     }
 
-    rafId = requestAnimationFrame(animate);
+    updatePlaneTransform();
+    requestAnimationFrame(animateWall);
   }
 
-  rafId = requestAnimationFrame(animate);
-
-  // ResizeObserver to adapt copy count seamlessly
-  const ro = new ResizeObserver(([entry]) => {
-    const h = entry.contentRect.height;
-    if (h && Math.abs(h - containerHeight) > 30) {
-      containerHeight = h;
-      columnMeta = columnItems.map(col => getColumnMeta(col));
-    }
-  });
-  ro.observe(container);
-
-  // Pointer interactions
-  root.addEventListener('pointerenter', () => {
-    wallHovered = true;
-  });
+  requestAnimationFrame(animateWall);
 
   root.addEventListener('pointermove', (e) => {
     const rect = root.getBoundingClientRect();
-    if (parallax > 0 && !reduced) {
-      pointer.x = (e.clientX - rect.left) / rect.width - 0.5;
-      pointer.y = (e.clientY - rect.top) / rect.height - 0.5;
-    }
-    const hit = document.elementFromPoint(e.clientX, e.clientY);
-    const tile = hit ? hit.closest('.drift-wall__tile') : null;
-    if (!tile) {
-      releaseActive();
-      return;
-    }
-    setActiveTile(tile);
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    pointer.x = Math.max(-1, Math.min(1, nx));
+    pointer.y = Math.max(-1, Math.min(1, ny));
+    wallHovered = true;
   });
 
   root.addEventListener('pointerleave', () => {
     wallHovered = false;
     pointer.x = 0;
     pointer.y = 0;
-    releaseActive();
-  });
-
-  // Click on tile -> select jacket & scroll to collection
-  root.addEventListener('click', (e) => {
-    const tile = e.target.closest('.drift-wall__tile');
-    if (!tile) return;
-    const jId = tile.dataset.jacket;
-    if (jId) {
-      selectJacket(jId);
-      const showcase = document.getElementById('collection');
-      if (showcase) {
-        showcase.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  });
-
-  // Keyboard accessibility
-  root.addEventListener('focusin', (e) => {
-    const tile = e.target.closest('.drift-wall__tile');
-    if (tile) setActiveTile(tile);
-  });
-
-  root.addEventListener('focusout', () => {
-    releaseActive();
-  });
-
-  root.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const tile = e.target.closest('.drift-wall__tile');
-      if (tile && tile.dataset.jacket) {
-        e.preventDefault();
-        selectJacket(tile.dataset.jacket);
-        document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
   });
 }
 
@@ -975,42 +1046,60 @@ function initDriftWall() {
    ------------------------------------------------------------------- */
 
 function init() {
-  /* Determine starting jacket */
-  const startId = getJacketFromURL() || 'desire';
-  selectedJacketId = startId;
-  currentViewIndex = 0;
+  initDriftWall();
 
-  /* Preload the URL-specified jacket immediately */
-  preloadFromURL();
+  // Initialize Men's Accordion Carousel (5 jackets)
+  window.accordionMenAPI = createAccordionGallery({
+    rootId: 'accordionGalleryMen',
+    items: mensJackets,
+    defaultIndex: 2, // Desire
+    onSelectJacket: (id) => selectJacket(id, { scroll: true, fromAccordion: true })
+  });
 
-  renderControls();
+  // Initialize Women's Accordion Carousel (3 jackets)
+  window.accordionWomenAPI = createAccordionGallery({
+    rootId: 'accordionGalleryWomen',
+    items: womensJackets,
+    defaultIndex: 1, // Desire
+    onSelectJacket: (id) => selectJacket(id, { scroll: true, fromAccordion: true })
+  });
 
-  const startItem = collectionData.find(j => j.id === startId);
-  if (startItem) {
-    updateText(startItem);
-    const views = getViewsForItem(startItem);
-    const initialView = views[0] || { src: startItem.image, alt: `${startItem.colour} jacket — ${startItem.impulse}` };
-    const initialImg = $('#jacketImage');
-    if (initialImg) {
-      initialImg.src = initialView.src;
-      initialImg.alt = initialView.alt;
-    }
-    updateGalleryUI(startItem);
-    preloadViews(startItem);
-    syncURL(startId);
-    preloadAdjacent(startId);
-  }
+  // Department switch button click listeners
+  const tabMen = document.getElementById('tab-gender-men');
+  const tabWomen = document.getElementById('tab-gender-women');
 
-  /* Wire up error fallback for the initial image in the HTML */
-  const img = $('#jacketImage');
-  if (img) {
-    img.addEventListener('error', () => {
-      const item = collectionData.find(j => j.id === selectedJacketId);
-      if (item) showFallback(item);
+  if (tabMen) {
+    tabMen.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchDepartment('men', { syncJacket: true, scroll: false });
     });
   }
 
-  initDriftWall();
+  if (tabWomen) {
+    tabWomen.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchDepartment('women', { syncJacket: true, scroll: false });
+    });
+  }
+
+  // Pre-render the default active jacket (Men's Desire) in showcase
+  const defaultJacket = mensJackets[2];
+  renderShowcase(defaultJacket);
+
+  // Preload primary assets
+  allCollectionJackets.forEach(j => {
+    const img = new Image();
+    img.src = j.image;
+    if (j.views && j.views[0]) {
+      const vImg = new Image();
+      vImg.src = j.views[0].src;
+    }
+  });
 }
 
-init();
+// Kick off when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

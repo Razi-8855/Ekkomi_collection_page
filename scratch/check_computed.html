@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id='f' src='../index.html' style='width:390px; height:844px;'></iframe>
+<script>
+window.onload = () => {
+  setTimeout(() => {
+    const doc = document.getElementById('f').contentDocument;
+    const grid = doc.querySelector('#productShowcase .gallery-views-grid');
+    const cs = doc.defaultView.getComputedStyle(grid);
+    const nav = doc.querySelector('.showcase-bottom-nav');
+    const ncs = doc.defaultView.getComputedStyle(nav);
+    const btn = doc.querySelector('.showcase-nav-btn');
+    const bcs = doc.defaultView.getComputedStyle(btn);
+    console.log('COMPUTED_GRID_COLS: ' + cs.gridTemplateColumns);
+    console.log('NAV_FLEX_DIR: ' + ncs.flexDirection);
+    console.log('BTN_WIDTH: ' + bcs.width);
+  }, 1200);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id='f' src='../index.html' style='width:390px; height:844px;'></iframe>
+<script>
+window.onload = async () => {
+  await new Promise(r => setTimeout(r, 1500));
+  const doc = document.getElementById('f').contentDocument;
+  const grid = doc.querySelector('#jacket-women-curiosity .gallery-views-grid');
+  const cs = doc.defaultView.getComputedStyle(grid);
+  const cards = grid.querySelectorAll('.gallery-view-card');
+  const cardRects = Array.from(cards).map((c, i) => {
+    const r = c.getBoundingClientRect();
+    return { i, left: Math.round(r.left), top: Math.round(r.top), width: Math.round(r.width) };
+  });
+  console.log('GRID_COLS: ' + cs.gridTemplateColumns);
+  console.log('GRID_GAP: ' + cs.gap);
+  console.log('CARD_RECTS: ' + JSON.stringify(cardRects));
+};
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@
   <meta name="description" content="Nocturne — the first collection from Ekkomi. Five impulses. Five jackets." />
   <title>Ekkomi — Nocturne</title>
   <link rel="icon" type="image/png" href="assets/ekkomi_favicon.png" />
-  <link rel="stylesheet" href="styles.css?v=driftwall" />
+  <link rel="stylesheet" href="styles.css?v=curiosity_female_v1" />
 </head>
 
 <body>
@@ -39,76 +39,77 @@
       </div>
     </section>
 
-    <!-- Collection Impulse Navigation Bar -->
-    <div class="collection-nav-bar" id="collectionNavBar">
-      <div class="section">
-        <nav class="impulse-nav" role="tablist" aria-label="Choose a Nocturne jacket" id="impulseNav"></nav>
-      </div>
-    </div>
-
-
-    <!-- role="tabpanel" — controlled by the tablist above -->
-    <section class="showcase" id="collection" role="tabpanel" aria-live="polite" aria-labelledby="productHeadline">
-      <div class="showcase-visual">
-        <p class="visual-caption">Nocturne / <span id="visualNumber">03</span> — <span id="visualImpulse">Desire</span>
-          <span class="gallery-counter" id="galleryCounter" aria-live="polite">· 01 / 03</span>
-        </p>
-        <div class="jacket-stage" id="jacketStage" role="region" aria-label="Jacket image gallery — swipe or use arrows to view more angles" tabindex="0">
-          <button class="gallery-nav-btn gallery-prev-btn" id="galleryPrevBtn" type="button" aria-label="Previous view of this jacket">
-            <span aria-hidden="true">&#8592;</span>
-          </button>
-          <img id="jacketImage" src="assets/collection/nocturne/desire/desire.jpg?v=original" alt="Deep red jacket — Desire"
-            width="1200" height="1500" />
-          <!-- Neutral beige fallback shown on image error -->
-          <div class="jacket-img-fallback" id="jacketImgFallback" aria-hidden="true">
-            <span id="fallbackLabel"></span>
+                <!-- ============================================================
+         NOCTURNE COLLECTION: DUAL EDIT (MEN'S & WOMEN'S)
+         ============================================================ -->
+    <section class="collection-showcase-section" id="collection" role="region" aria-label="Nocturne collection">
+      
+      <!-- Top Department Switcher Bar -->
+      <div class="collection-nav-bar" id="collectionNavBar">
+        <div class="section">
+          <div class="collection-gender-switch" role="tablist" aria-label="Nocturne collection departments">
+            <button class="gender-switch-btn is-active" id="tab-gender-men" type="button" role="tab" aria-selected="true" data-department="men">
+              <span class="gender-label">MEN</span>
+              <span class="gender-badge">05 Styles</span>
+            </button>
+            <span class="gender-switch-divider" aria-hidden="true">/</span>
+            <button class="gender-switch-btn" id="tab-gender-women" type="button" role="tab" aria-selected="false" data-department="women">
+              <span class="gender-label">WOMEN</span>
+              <span class="gender-badge">03 Styles</span>
+            </button>
           </div>
-          <button class="gallery-nav-btn gallery-next-btn" id="galleryNextBtn" type="button" aria-label="Next view of this jacket">
-            <span aria-hidden="true">&#8594;</span>
-          </button>
         </div>
-        <div class="showcase-arrows">
-          <button class="round-button" id="previousButton" type="button" aria-label="Previous jacket">&#8592;</button>
-          <button class="round-button" id="nextButton" type="button" aria-label="Next jacket">&#8594;</button>
+      </div>
+
+      <!-- ============================================================
+           1. MEN'S COLLECTION (5 Jackets)
+           Curiosity, Temptation, Desire, Audacity, Insolence
+           ============================================================ -->
+      <div class="collection-department-block is-active" id="mens-department" data-department="men">
+        <header class="section collection-department-header" id="mens-collection">
+          <div class="department-header-inner">
+            <span class="department-eyebrow">The Nocturne Edit</span>
+            <h2 class="department-title">Men&#8217;s Collection</h2>
+            <p class="department-subtitle">Five expressions of instinct.</p>
+          </div>
+        </header>
+
+        <!-- Accordion Gallery Container (Men's 5 panels) -->
+        <div class="section accordion-gallery-container">
+          <div id="accordionGalleryMen" class="accordion-gallery" role="list" aria-label="Men's Nocturne jackets gallery"></div>
         </div>
-        <nav class="gallery-pills" id="galleryPills" role="tablist" aria-label="Jacket views"></nav>
       </div>
 
-      <div class="product-meta" id="productMeta">
-        <p class="eyebrow" id="productImpulse">Desire</p>
-        <p id="productColour">Deep Red</p>
+      <!-- ============================================================
+           2. WOMEN'S COLLECTION (3 Jackets)
+           Curiosity, Desire, Audacity
+           ============================================================ -->
+      <div class="collection-department-block is-hidden" id="womens-department" data-department="women" style="display: none;">
+        <header class="section collection-department-header" id="womens-collection">
+          <div class="department-header-inner">
+            <span class="department-eyebrow">The Nocturne Edit</span>
+            <h2 class="department-title">Women&#8217;s Collection</h2>
+            <p class="department-subtitle">Three expressions of instinct.</p>
+          </div>
+        </header>
+
+        <!-- Accordion Gallery Container (Women's 3 panels) -->
+        <div class="section accordion-gallery-container">
+          <div id="accordionGalleryWomen" class="accordion-gallery" role="list" aria-label="Women's Nocturne jackets gallery"></div>
+        </div>
       </div>
 
-      <article class="showcase-content" id="showcaseContent">
-        <h2 id="productHeadline">Wanting more is not always greed. Sometimes it is vision.</h2>
-        <p class="product-narrative" id="productNarrative"></p>
-        <dl class="details-list">
-          <div>
-            <dt>The Material</dt>
-            <dd id="productMaterial"></dd>
-          </div>
-          <div>
-            <dt>The Embroidery</dt>
-            <dd id="productEmbroidery"></dd>
-          </div>
-          <div>
-            <dt>The Inner World</dt>
-            <dd id="productInnerWorld"></dd>
-          </div>
-          <!-- hidden by JS until real construction copy is supplied -->
-          <div id="constructionRow" hidden>
-            <dt>The Construction</dt>
-            <dd id="productConstruction"></dd>
-          </div>
-        </dl>
-        <a class="text-link" id="productLink" href="#collection" aria-label="View Desire jacket">
-          View product <span class="arrow" aria-hidden="true">&#8594;</span>
-        </a>
-      </article>
-    </section>
+      <!-- ============================================================
+           3. DYNAMIC PRODUCT SHOWCASE (Single in-place showcase)
+           Directly beneath the carousel, updates dynamically
+           ============================================================ -->
+      <div class="showcase-container">
+        <section class="jacket-detail-section dynamic-product-showcase" id="productShowcase" aria-live="polite">
+          <!-- Dynamically populated and transitioned by app.js (Initial state rendered on boot) -->
+        </section>
+      </div>
 
-
-  </main>
+    </section></main>
 
   <footer class="site-footer">
     <img class="footer-logo" src="assets/Ekkomi_logo_2.png" alt="Ekkomi" width="160" height="96" />
@@ -116,7 +117,9 @@
     <span class="footer-tagline">Made to be discovered.</span>
   </footer>
 
-  <script src="app.js?v=driftwall"></script>
+  <!-- GSAP for smooth high-performance Accordion Gallery transitions -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="app.js?v=curiosity_female_v1"></script>
 </body>
 
 </html>

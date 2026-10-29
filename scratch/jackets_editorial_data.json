@@ -1,0 +1,146 @@
+{
+  "men-curiosity": {
+    "headline": "They told you curiosity was dangerous. It is also how every new world is found.",
+    "narrative": "Curiosity refuses the comfort of the already known. It looks twice, asks another question, follows the detail others might pass by. Rendered in deep navy suede, intricate tone-on-tone embroidery rewards that same instinct — receding into the surface at first glance, then revealing more as light moves across it. A piece made for those who would rather discover than simply be shown.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Dyed suede gives the jacket its depth, structure and tactile character."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Tone-on-tone embroidery moves quietly across the surface, designed to reward a closer look rather than reveal itself all at once."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed."
+      }
+    ]
+  },
+  "men-temptation": {
+    "headline": "Not every temptation is a weakness. Sometimes it is recognition.",
+    "narrative": "Temptation begins with the awareness that something else is possible — a pull toward what lies just beyond the choices already made for us. In deep forest green suede, tone-on-tone embroidery moves between shadow and visibility, creating a surface that reveals itself gradually rather than giving everything away. A piece for the possibility that becomes increasingly difficult to ignore.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Richly dyed suede gives the jacket its depth of colour, softness and structure."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Intricate tonal embroidery sits close to the colour of the leather, appearing and disappearing with movement and changing light."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "Inside, the illustrated lining offers a more expressive world than the exterior first suggests. Because restraint does not require the absence of temptation."
+      }
+    ]
+  },
+  "men-desire": {
+    "headline": "Wanting more is not always greed. Sometimes it is vision.",
+    "narrative": "Desire is the instinct that refuses to be satisfied by what is already there. It begins with recognition — of what could be, of what is missing, of what feels worth moving toward — and turns that recognition into intent. Rendered in deep red suede, the jacket carries that tension between restraint and appetite. Tone-on-tone embroidery moves through the surface in shifting fragments, revealing itself gradually as light catches the garment and then recedes again.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Deeply dyed suede gives the jacket its richness, structure and tactile presence."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Tone-on-tone embroidery is integrated into the surface of the garment, allowing pattern and texture to emerge gradually as the light changes."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "A richly illustrated lining sits in deliberate contrast to the controlled exterior. Because desire does not have to announce itself to be felt."
+      }
+    ]
+  },
+  "men-audacity": {
+    "headline": "Audacity is confidence before permission arrives.",
+    "narrative": "Audacity is the willingness to move before the world has decided you may. To take the unexpected route, occupy the space available to you — and occasionally the space that was not. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricacy and restraint. A piece that stands apart without turning difference into performance.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Dyed suede gives the saturated mustard tone both richness and weight, balancing expressive colour with a structured silhouette."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Tone-on-tone embroidery adds complexity without competing with the strength of the colour, revealing itself through texture and light."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the more controlled surface. Because audacity does not end where other people stop looking."
+      }
+    ]
+  },
+  "men-insolence": {
+    "headline": "Respect the rule. Question its right to rule you.",
+    "narrative": "Insolence begins with discernment. Not the rejection of convention for its own sake, but the confidence to decide which traditions deserve respect — and which have simply become habits of obedience. Rendered in black suede, near-concealed tonal embroidery turns restraint into something more subversive: detail that exists without demanding recognition. Refined, controlled and entirely capable of disobedience.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Black dyed suede gives the jacket weight, texture and an understated depth that rewards proximity."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Dark tonal embroidery sits almost within the surface itself, becoming visible through shifts in light rather than contrast."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "The illustrated lining disrupts the restraint of the exterior with a world known most intimately by the wearer. Because what is hidden can still have character."
+      }
+    ]
+  },
+  "women-curiosity": {
+    "headline": "They told you curiosity was dangerous. It is also how every new world is found.",
+    "narrative": "Curiosity refuses the comfort of the already known. Reimagined for the women's silhouette in deep navy suede, intricate tone-on-tone embroidery moves quietly across tailored lines — subtle, restrained, and rewarding a closer look. A piece made for those who would rather discover than simply be shown.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Dyed navy suede selected for its softness, lightweight drape and refined structure."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Tone-on-tone diamond and floral embroidery contoured across the yoke and collar, catching the light with natural movement."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed."
+      }
+    ]
+  },
+  "women-desire": {
+    "headline": "Wanting more is not always greed. Sometimes it is vision.",
+    "narrative": "Desire is the instinct that refuses to be satisfied by what is already there. Rendered in deep red suede and cut with fluid feminine tailoring, the jacket carries that essential tension between restraint and appetite. Tonal embroidery shifts across the surface, catching the light with movement. Sensual without spectacle. Expressive without surrendering restraint.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Deeply dyed suede provides richness, supple hand-feel and elegant architectural drape."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Tone-on-tone embroidery integrated across the back and shoulders, emerging gradually as light changes."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "A richly illustrated lining sits in deliberate contrast to the controlled exterior."
+      }
+    ]
+  },
+  "women-audacity": {
+    "headline": "Audacity is confidence before permission arrives.",
+    "narrative": "Audacity is the willingness to move before the world has decided you may. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricate restraint. Tailored for feminine form, the silhouette stands apart with quiet authority rather than performance.",
+    "craft": [
+      {
+        "title": "The Material",
+        "desc": "Dyed mustard suede balancing saturated warmth with a supple, sculptural silhouette."
+      },
+      {
+        "title": "The Embroidery",
+        "desc": "Tonal embroidery contours the upper bodice, revealing intricate texture without competing with the colour."
+      },
+      {
+        "title": "The Inner World",
+        "desc": "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the controlled surface."
+      }
+    ]
+  }
+}

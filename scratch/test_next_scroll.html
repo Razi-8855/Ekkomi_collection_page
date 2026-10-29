@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0; padding:0;">
+<iframe id="f" src="../index.html" style="width:1280px; height:800px; border:none;"></iframe>
+<script>
+window.onload = async () => {
+  const f = document.getElementById('f');
+  const doc = f.contentDocument;
+  const win = f.contentWindow;
+
+  await new Promise(r => setTimeout(r, 1200));
+
+  // 1. Check initial scroll and state
+  console.log('INIT_JACKET: ' + doc.getElementById('showcaseJacketTitle')?.textContent);
+
+  // 2. Click Next Jacket at the bottom
+  const nextBtn = doc.getElementById('nextJacketBtn');
+  console.log('NEXT_BTN_EXISTS: ' + !!nextBtn);
+  if (nextBtn) {
+    // Scroll window down to bottom so button is clicked
+    win.scrollTo(0, 2000);
+    await new Promise(r => setTimeout(r, 400));
+    console.log('SCROLLED_TO_BOTTOM: ' + win.pageYOffset);
+
+    // Click Next
+    nextBtn.click();
+    await new Promise(r => setTimeout(r, 800));
+
+    const newTitle = doc.getElementById('showcaseJacketTitle')?.textContent;
+    const scrollYAfter = win.pageYOffset;
+    const showcaseRect = doc.getElementById('productShowcase')?.getBoundingClientRect();
+
+    console.log('AFTER_NEXT_TITLE: ' + newTitle);
+    console.log('AFTER_NEXT_SCROLL_Y: ' + scrollYAfter);
+    console.log('SHOWCASE_TOP_RECT: ' + showcaseRect.top);
+  }
+};
+</script>
+</body>
+</html>
