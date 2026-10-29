@@ -204,7 +204,7 @@ def build_customer_email(data):
         f"  • Collection: {collection}'s Collection\n"
         f"  • Jacket:     {jacket_name} ({jacket_colour})\n"
         f"  • Size:       {size}\n\n"
-        f"We will notify you about your selected jacket's availability within 12 hours.\n\n"
+        f"We will notify you about your selected jacket's availability.\n\n"
         f"Thank you for your interest in EKKOMI.\n\n"
         f"Warm regards,\n"
         f"EKKOMI\n"
@@ -243,7 +243,7 @@ def build_customer_email(data):
     </div>
   </div>
 
-  <p class="p">We will notify you about your selected piece&#8217;s availability within 12 hours.</p>
+  <p class="p">We will notify you about your selected jacket&#8217;s availability.</p>
   <p class="p" style="margin-top: 24px;">Warm regards,<br><strong>EKKOMI</strong></p>
 
   <div class="footer">&copy; 2026 EKKOMI &middot; <a href="mailto:info@ekkomi.co.uk" style="color: #8C7D78; text-decoration: none;">info@ekkomi.co.uk</a></div>

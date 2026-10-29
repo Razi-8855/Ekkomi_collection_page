@@ -670,7 +670,7 @@
     return {
       to: data.email,
       subject: 'Your EKKOMI NOCTURNE Waiting List Confirmation',
-      body: `Thank you for joining the EKKOMI NOCTURNE waiting list.\n\nWe've successfully received your request for the following piece:\n\nCollection: ${data.collection}\nJacket: ${data.jacketName}\nSize: ${data.size}\n\nWe'll notify you about your selected jacket's availability within 12 hours.\n\nThank you for your interest in EKKOMI.\n\nEKKOMI`
+      body: `Thank you for joining the EKKOMI NOCTURNE waiting list.\n\nWe've successfully received your request for the following piece:\n\nCollection: ${data.collection}\nJacket: ${data.jacketName}\nSize: ${data.size}\n\nWe'll notify you about your selected jacket's availability.\n\nThank you for your interest in EKKOMI.\n\nEKKOMI`
     };
   }
 
