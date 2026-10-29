@@ -22,16 +22,13 @@
   };
 
   // Backend API Configuration (Local Dev & Hosted Supabase Edge Function)
+  // Backend API Configuration — Supabase Edge Function
   const BACKEND_CONFIG = {
-    // Hosted Supabase Edge Function (configured via window.EKKOMI_WAITLIST_ENDPOINT or hardcoded once deployed)
-    supabaseEndpoint: window.EKKOMI_WAITLIST_ENDPOINT || '',
-    localEndpoint: '/api/waitlist',
+    supabaseEndpoint:
+      'https://chjzsdnypkllihdzokhg.supabase.co/functions/v1/waitlist',
 
     getEndpoint: function () {
-      if (this.supabaseEndpoint && this.supabaseEndpoint.trim().length > 0) {
-        return this.supabaseEndpoint.trim();
-      }
-      return this.localEndpoint;
+      return this.supabaseEndpoint;
     }
   };
 
@@ -237,7 +234,7 @@
         }, 80);
         return;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     if (!AUTO_POPUP_CONFIG.enabled) return;
     // Show first when customer opens the collection page
@@ -260,7 +257,7 @@
       if (scrollbarWidth > 0) {
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
-    } catch(e) {}
+    } catch (e) { }
 
     state.isOpen = true;
     document.body.classList.add('waitlist-open');
@@ -306,13 +303,13 @@
     backdropEl.setAttribute('aria-hidden', 'true');
 
     if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
-      try { previouslyFocusedElement.focus(); } catch(e) {}
+      try { previouslyFocusedElement.focus(); } catch (e) { }
     }
 
     // Remember dismissal
     try {
       localStorage.setItem(AUTO_POPUP_CONFIG.storageKey, 'true');
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function goToStep(stepNum, pushHistory = true) {
@@ -614,7 +611,7 @@
           email: payload.email,
           phone: payload.phone
         }));
-      } catch (storageErr) {}
+      } catch (storageErr) { }
 
       // Attempt to post to real backend endpoint
       const endpoint = BACKEND_CONFIG.getEndpoint();
@@ -651,7 +648,7 @@
 
         try {
           localStorage.removeItem('ekkomi_waitlist_draft');
-        } catch (e) {}
+        } catch (e) { }
 
         goToStep(6, false);
       } else {
