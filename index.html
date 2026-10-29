@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 
 <head>
   <meta charset="UTF-8" />
@@ -7,7 +7,8 @@
   <meta name="description" content="Nocturne — the first collection from Ekkomi. Five impulses. Five jackets." />
   <title>Ekkomi — Nocturne</title>
   <link rel="icon" type="image/png" href="assets/ekkomi_favicon.png" />
-  <link rel="stylesheet" href="styles.css?v=curiosity_female_v1" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="stylesheet" href="styles.css?v=footer_v3" />
 </head>
 
 <body>
@@ -15,10 +16,16 @@
   <header class="site-header">
     <span class="header-detail">The first collection</span>
     <a class="wordmark" href="#top" aria-label="Ekkomi home">
-      <img class="wordmark-logo" src="assets/Ekkomi_logo_1.png" alt="Ekkomi" width="200" height="120" />
+      <img class="wordmark-logo" src="assets/Ekkomi_logo_1.png" alt="Ekkomi" width="200" height="120" decoding="async" fetchpriority="high" />
       <span class="wordmark-text">EKKOMI</span>
     </a>
-    <button class="menu-button" type="button" aria-label="Open menu">Menu <span aria-hidden="true">+</span></button>
+    <div class="header-actions">
+      <button class="header-waitlist-btn" id="headerWaitlistBtn" type="button" aria-label="Join the waiting list">
+        <span class="waitlist-btn-text-full">JOIN THE WAITING LIST</span>
+        <span class="waitlist-btn-text-short">WAITLIST</span>
+      </button>
+      <button class="menu-button" type="button" aria-label="Open menu">Menu <span aria-hidden="true">+</span></button>
+    </div>
   </header>
 
   <main id="top">
@@ -111,15 +118,189 @@
 
     </section></main>
 
-  <footer class="site-footer">
-    <img class="footer-logo" src="assets/Ekkomi_logo_2.png" alt="Ekkomi" width="160" height="96" />
-    <span>Nocturne / 2026</span>
-    <span class="footer-tagline">Made to be discovered.</span>
+  <footer class="site-footer" role="contentinfo">
+    <div class="section footer-inner">
+      <div class="footer-col-brand">
+        <span class="footer-wordmark">EKKOMI</span>
+        <p class="footer-copyright">&copy; 2026 EKKOMI. All rights reserved.</p>
+      </div>
+      <div class="footer-col-links">
+        <a class="footer-link footer-link-ig" href="https://instagram.com/ekkomi" target="_blank" rel="noopener noreferrer" aria-label="Ekkomi on Instagram">
+          <svg class="footer-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          <span>INSTAGRAM</span>
+        </a>
+        <a class="footer-link footer-link-email" href="mailto:info@ekkomi.co.uk" aria-label="Email Ekkomi at info@ekkomi.co.uk">
+          <svg class="footer-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+          </svg>
+          <span>info@ekkomi.co.uk</span>
+        </a>
+      </div>
+    </div>
   </footer>
 
   <!-- GSAP for smooth high-performance Accordion Gallery transitions -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="app.js?v=curiosity_female_v1"></script>
+  <script src="app.js?v=lux_uk_v1"></script>
+
+  <!-- ============================================================
+       JOIN THE WAITING LIST: MULTI-STEP EDITORIAL MODAL
+       ============================================================ -->
+  <div class="waitlist-modal-backdrop" id="waitlistBackdrop" aria-hidden="true">
+    <div class="waitlist-modal-dialog" id="waitlistDialog" role="dialog" aria-modal="true" aria-labelledby="waitlistModalTitle">
+      
+      <!-- Modal Navigation Header -->
+      <div class="waitlist-modal-header">
+        <button type="button" class="waitlist-back-btn is-hidden" id="waitlistBackBtn" aria-label="Go back to previous step">
+          <span aria-hidden="true">&larr;</span> Back
+        </button>
+        <div class="waitlist-progress-dots" id="waitlistProgress" aria-label="Step progress">
+          <span class="progress-dot is-active" data-step="1"></span>
+          <span class="progress-dot" data-step="2"></span>
+          <span class="progress-dot" data-step="3"></span>
+          <span class="progress-dot" data-step="4"></span>
+          <span class="progress-dot" data-step="5"></span>
+        </div>
+        <button type="button" class="waitlist-close-btn" id="waitlistCloseBtn" aria-label="Exit popup and explore collection" title="Exit to collection">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="1" y1="1" x2="13" y2="13"></line>
+            <line x1="13" y1="1" x2="1" y2="13"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Step 1: Introduction -->
+      <div class="waitlist-step" id="waitlistStep1" data-step="1">
+        <div class="waitlist-step-content text-center">
+          <p class="waitlist-eyebrow">EKKOMI &middot; NOCTURNE</p>
+          <h2 class="waitlist-title" id="waitlistModalTitle">JOIN THE WAITING LIST</h2>
+          <p class="waitlist-subtitle">Your desired piece, your size. Be the first to know.</p>
+          <div class="waitlist-actions">
+            <button type="button" class="waitlist-primary-btn" id="step1ContinueBtn">CONTINUE</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Select Collection -->
+      <div class="waitlist-step is-hidden" id="waitlistStep2" data-step="2">
+        <div class="waitlist-step-content">
+          <p class="waitlist-eyebrow">STEP 01 / 04</p>
+          <h2 class="waitlist-title">CHOOSE YOUR COLLECTION</h2>
+          <div class="waitlist-collection-grid" role="radiogroup" aria-label="Choose collection">
+            <button type="button" class="waitlist-card-option" data-collection="men" role="radio" aria-checked="false">
+              <span class="option-tag">05 Styles</span>
+              <span class="option-name">MEN</span>
+              <span class="option-desc">Curiosity, Temptation, Desire, Audacity, Insolence</span>
+            </button>
+            <button type="button" class="waitlist-card-option" data-collection="women" role="radio" aria-checked="false">
+              <span class="option-tag">03 Styles</span>
+              <span class="option-name">WOMEN</span>
+              <span class="option-desc">Curiosity, Desire, Audacity</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Select Jacket -->
+      <div class="waitlist-step is-hidden" id="waitlistStep3" data-step="3">
+        <div class="waitlist-step-content">
+          <p class="waitlist-eyebrow">STEP 02 / 04 &middot; <span id="summaryCollectionLabel">MEN</span></p>
+          <h2 class="waitlist-title">CHOOSE YOUR JACKET</h2>
+          <div class="waitlist-jackets-list" id="waitlistJacketsList" role="radiogroup" aria-label="Choose jacket">
+            <!-- Populated dynamically by waitlist.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Select Size -->
+      <div class="waitlist-step is-hidden" id="waitlistStep4" data-step="4">
+        <div class="waitlist-step-content text-center">
+          <p class="waitlist-eyebrow">STEP 03 / 04 &middot; <span id="summaryJacketLabel">DESIRE</span></p>
+          <h2 class="waitlist-title">SELECT YOUR SIZE</h2>
+          <div class="waitlist-sizes-grid" id="waitlistSizesGrid" role="radiogroup" aria-label="Select size">
+            <!-- Populated dynamically by waitlist.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Customer Details Form -->
+      <div class="waitlist-step is-hidden" id="waitlistStep5" data-step="5">
+        <div class="waitlist-step-content">
+          <p class="waitlist-eyebrow">FINAL STEP</p>
+          <h2 class="waitlist-title">YOUR DETAILS</h2>
+          
+          <!-- Summary Pill -->
+          <div class="waitlist-selection-pill" id="waitlistSelectionPill">
+            <span class="pill-dot" id="pillColorDot"></span>
+            <span class="pill-text" id="pillSummaryText">Men &middot; Desire &middot; Size M</span>
+            <button type="button" class="pill-edit-btn" id="pillEditBtn" aria-label="Edit selections">Edit</button>
+          </div>
+
+          <form class="waitlist-form" id="waitlistForm" novalidate>
+            <!-- Anti-Spam Honeypot Field (invisible to real human visitors) -->
+            <input type="text" name="b_company_url" id="waitlistHoneypot" tabindex="-1" autocomplete="off" style="display:none!important;" aria-hidden="true" />
+            <div class="waitlist-form-group">
+              <label class="waitlist-label" for="waitlistFullName">Full Name</label>
+              <input class="waitlist-input" type="text" id="waitlistFullName" name="fullName" placeholder="Your full name" autocomplete="name" required />
+              <span class="waitlist-error" id="nameError"></span>
+            </div>
+
+            <div class="waitlist-form-group">
+              <label class="waitlist-label" for="waitlistEmail">Email Address</label>
+              <input class="waitlist-input" type="email" id="waitlistEmail" name="email" placeholder="your@email.com" autocomplete="email" required />
+              <span class="waitlist-error" id="emailError"></span>
+            </div>
+
+            <div class="waitlist-form-group">
+              <label class="waitlist-label" for="waitlistPhone">Phone Number</label>
+              <input class="waitlist-input" type="tel" id="waitlistPhone" name="phone" placeholder="+44 7123 456789" autocomplete="tel" required />
+              <span class="waitlist-error" id="phoneError"></span>
+            </div>
+
+            <div class="waitlist-consent-group">
+              <label class="waitlist-consent-label">
+                <input class="waitlist-checkbox" type="checkbox" id="waitlistConsent" name="consent" required />
+                <span class="consent-text">I agree to receive availability updates from EKKOMI regarding my selected piece.</span>
+              </label>
+              <span class="waitlist-error" id="consentError"></span>
+            </div>
+
+            <div class="waitlist-form-error" id="generalFormError" role="alert"></div>
+
+            <button type="submit" class="waitlist-primary-btn" id="submitWaitlistBtn">
+              <span class="btn-text">JOIN THE WAITING LIST</span>
+              <span class="btn-spinner is-hidden" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Step 6: Registration Success -->
+      <div class="waitlist-step is-hidden" id="waitlistStep6" data-step="6">
+        <div class="waitlist-step-content text-center">
+          <div class="waitlist-success-badge" aria-hidden="true">&#10003;</div>
+          <h2 class="waitlist-title">YOU&#8217;RE ON THE LIST</h2>
+          <p class="waitlist-success-msg">Your interest has been registered successfully.</p>
+          <div class="waitlist-availability-box">
+            <p class="availability-headline">We&#8217;ll notify you about your selected jacket&#8217;s availability within 12 hours.</p>
+          </div>
+          <p class="waitlist-closing-line">Thank you for your interest in EKKOMI.</p>
+          <div class="waitlist-actions">
+            <button type="button" class="waitlist-primary-btn" id="backToCollectionBtn">EXPLORE EKKOMI COLLECTIONS</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Multi-step Waiting List logic & backend integration -->
+  <script src="waitlist.js?v=phone_v1"></script>
 </body>
 
 </html>

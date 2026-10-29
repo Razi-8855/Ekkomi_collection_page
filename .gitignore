@@ -1,0 +1,30 @@
+# Environment & Secrets (NEVER commit to GitHub)
+.env
+.env.*
+!.env.example
+
+# Customer & Registration Data (Private Customer Info)
+waitlist_registrations.json
+*.jsonl
+
+# Python cache & runtime
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Scratch & temporary verification files
+scratch/
+temp_check.html
+test_debug_layout.html
+test_phone_view.html
+test_steady_view.html
+test_steady_mobile.html
+test_measure.html
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

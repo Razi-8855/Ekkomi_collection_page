@@ -1,0 +1,4 @@
+# Configuration for waitlist edge function
+[functions.waitlist]
+verify_jwt = false
+

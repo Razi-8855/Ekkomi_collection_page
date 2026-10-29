@@ -59,12 +59,12 @@ const mensJackets = [
     image: imgPath('curiosity', 'curiosity.jpg'),
     label: '01 / CURIOSITY',
     sublabel: 'DARK NAVY',
-    headline: "They told you curiosity was dangerous. It is also how every new world is found.",
-    narrative: "Curiosity refuses the comfort of the already known. It looks twice, asks another question, follows the detail others might pass by. Rendered in deep navy suede, intricate tone-on-tone embroidery rewards that same instinct — receding into the surface at first glance, then revealing more as light moves across it. A piece made for those who would rather discover than simply be shown.",
+    headline: "Curiosity is how every new world is found.",
+    narrative: "Refusing the comfort of the already known. Rendered in deep navy suede with subtle tone-on-tone embroidery that reveals itself only under light. Made for those who discover rather than follow.",
     craft: [
-      { title: "The Material", desc: "Dyed suede gives the jacket its depth, structure and tactile character." },
-      { title: "The Embroidery", desc: "Tone-on-tone embroidery moves quietly across the surface, designed to reward a closer look rather than reveal itself all at once." },
-      { title: "The Inner World", desc: "A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed." }
+      { title: "The Material", desc: "Deeply dyed navy suede with a velvety, structured hand-feel." },
+      { title: "The Embroidery", desc: "Tonal diamond and floral needlework emerging under shifting light." },
+      { title: "The Inner World", desc: "An illustrated silk lining creating a private, unexpected counterpoint." }
     ],
     views: [
       { label: 'Front Silhouette', src: imgPath('curiosity', 'curiosity.jpg'), alt: "Dark Navy jacket — Men's Curiosity Front Silhouette (Male Model)" },
@@ -87,11 +87,11 @@ const mensJackets = [
     label: '02 / TEMPTATION',
     sublabel: 'FOREST GREEN',
     headline: "Not every temptation is a weakness. Sometimes it is recognition.",
-    narrative: "Temptation begins with the awareness that something else is possible — a pull toward what lies just beyond the choices already made for us. In deep forest green suede, tone-on-tone embroidery moves between shadow and visibility, creating a surface that reveals itself gradually rather than giving everything away. A piece for the possibility that becomes increasingly difficult to ignore.",
+    narrative: "The pull toward what lies just beyond the accepted path. Forest green suede with tonal embroidery that hovers between shadow and form. A study in quiet recognition.",
     craft: [
-      { title: "The Material", desc: "Richly dyed suede gives the jacket its depth of colour, softness and structure." },
-      { title: "The Embroidery", desc: "Intricate tonal embroidery sits close to the colour of the leather, appearing and disappearing with movement and changing light." },
-      { title: "The Inner World", desc: "Inside, the illustrated lining offers a more expressive world than the exterior first suggests. Because restraint does not require the absence of temptation." }
+      { title: "The Material", desc: "Richly dyed forest suede balancing softness with architectural structure." },
+      { title: "The Embroidery", desc: "Subtle tonal needlework moving quietly between shadow and visibility." },
+      { title: "The Inner World", desc: "An expressive illustrated interior known most intimately by the wearer." }
     ],
     views: [
       { label: 'Front Silhouette', src: imgPath('temptation', 'temptation.jpg'), alt: "Forest Green jacket — Men's Temptation Front Full Body (Male Model)" },
@@ -112,12 +112,12 @@ const mensJackets = [
     image: imgPath('desire', 'desire.jpg'),
     label: '03 / DESIRE',
     sublabel: 'DEEP RED',
-    headline: "Wanting more is not always greed. Sometimes it is vision.",
-    narrative: "Desire is the instinct that refuses to be satisfied by what is already there. It begins with recognition — of what could be, of what is missing, of what feels worth moving toward — and turns that recognition into intent. Rendered in deep red suede, the jacket carries that tension between restraint and appetite. Tone-on-tone embroidery moves through the surface in shifting fragments, revealing itself gradually as light catches the garment and then recedes again.",
+    headline: "Wanting more is not greed. Sometimes it is vision.",
+    narrative: "The instinct that refuses to settle. Deep red suede meeting shifting tonal needlework—balanced between severe restraint and private appetite.",
     craft: [
-      { title: "The Material", desc: "Deeply dyed suede gives the jacket its richness, structure and tactile presence." },
-      { title: "The Embroidery", desc: "Tone-on-tone embroidery is integrated into the surface of the garment, allowing pattern and texture to emerge gradually as the light changes." },
-      { title: "The Inner World", desc: "A richly illustrated lining sits in deliberate contrast to the controlled exterior. Because desire does not have to announce itself to be felt." }
+      { title: "The Material", desc: "Deeply saturated crimson suede with a warm, tactile presence." },
+      { title: "The Embroidery", desc: "Integrated tonal threadwork catching the light through movement." },
+      { title: "The Inner World", desc: "A richly illustrated lining in deliberate contrast to the exterior." }
     ],
     views: [
       { label: 'Front Silhouette', src: imgPath('desire', 'desire.jpg'), alt: "Deep Red jacket — Men's Desire Front Seated (Male Model)" },
@@ -140,11 +140,11 @@ const mensJackets = [
     label: '04 / AUDACITY',
     sublabel: 'DEEP MUSTARD',
     headline: "Audacity is confidence before permission arrives.",
-    narrative: "Audacity is the willingness to move before the world has decided you may. To take the unexpected route, occupy the space available to you — and occasionally the space that was not. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricacy and restraint. A piece that stands apart without turning difference into performance.",
+    narrative: "The willingness to claim space before permission is granted. Saturated mustard suede tempered by fine tonal embroidery. Boldness without performance.",
     craft: [
-      { title: "The Material", desc: "Dyed suede gives the saturated mustard tone both richness and weight, balancing expressive colour with a structured silhouette." },
-      { title: "The Embroidery", desc: "Tone-on-tone embroidery adds complexity without competing with the strength of the colour, revealing itself through texture and light." },
-      { title: "The Inner World", desc: "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the more controlled surface. Because audacity does not end where other people stop looking." }
+      { title: "The Material", desc: "Weighty mustard suede balancing expressive warmth with structured form." },
+      { title: "The Embroidery", desc: "Intricate tonal needlework that rewards closer inspection." },
+      { title: "The Inner World", desc: "Private illustrated artwork continuing the confidence inward." }
     ],
     views: [
       { label: 'Front Silhouette', src: imgPath('audacity', 'audacity_lookbook_1.jpg'), alt: "Deep Mustard jacket — Men's Audacity Styled with Scarf (Male Model)" },
@@ -165,11 +165,11 @@ const mensJackets = [
     label: '05 / INSOLENCE',
     sublabel: 'BLACK',
     headline: "Respect the rule. Question its right to rule you.",
-    narrative: "Insolence begins with discernment. Not the rejection of convention for its own sake, but the confidence to decide which traditions deserve respect — and which have simply become habits of obedience. Rendered in black suede, near-concealed tonal embroidery turns restraint into something more subversive: detail that exists without demanding recognition. Refined, controlled and entirely capable of disobedience.",
+    narrative: "Not rebellion for its own sake, but the quiet sovereignty to choose which conventions deserve respect. Midnight black suede with near-invisible tonal embroidery.",
     craft: [
-      { title: "The Material", desc: "Black dyed suede gives the jacket weight, texture and an understated depth that rewards proximity." },
-      { title: "The Embroidery", desc: "Dark tonal embroidery sits almost within the surface itself, becoming visible through shifts in light rather than contrast." },
-      { title: "The Inner World", desc: "The illustrated lining disrupts the restraint of the exterior with a world known most intimately by the wearer. Because what is hidden can still have character." }
+      { title: "The Material", desc: "Matte black suede offering understated depth and proximity texture." },
+      { title: "The Embroidery", desc: "Near-concealed black threadwork submerged into the suede surface." },
+      { title: "The Inner World", desc: "Disruptive illustrated silk interior beneath the controlled exterior." }
     ],
     views: [
       { label: 'Front Silhouette', src: imgPath('insolence', 'insolence.jpg'), alt: "Black jacket — Men's Insolence Front Silhouette (Male Model Seated)" },
@@ -195,12 +195,12 @@ const womensJackets = [
     image: imgPath('curiosity', 'curiosity_women_1.jpg'),
     label: '01 / CURIOSITY',
     sublabel: 'DARK NAVY · WOMEN',
-    headline: "They told you curiosity was dangerous. It is also how every new world is found.",
-    narrative: "Curiosity refuses the comfort of the already known. Reimagined for the women's silhouette in deep navy suede, intricate tone-on-tone embroidery moves quietly across tailored lines — subtle, restrained, and rewarding a closer look. A piece made for those who would rather discover than simply be shown.",
+    headline: "Curiosity is how every new world is found.",
+    narrative: "The quiet courage to look twice. Tailored in dark navy suede with delicate tonal needlework across feminine contours. A piece to be discovered, not announced.",
     craft: [
-      { title: "The Material", desc: "Dyed navy suede selected for its softness, lightweight drape and refined structure." },
-      { title: "The Embroidery", desc: "Tone-on-tone diamond and floral embroidery contoured across the yoke and collar, catching the light with natural movement." },
-      { title: "The Inner World", desc: "A richly illustrated lining creates an unexpected counterpoint to the restrained exterior. Because some things are better discovered than displayed." }
+      { title: "The Material", desc: "Supple navy suede selected for graceful drape and tailored structure." },
+      { title: "The Embroidery", desc: "Contoured tonal needlework framing the yoke with understated grace." },
+      { title: "The Inner World", desc: "An illustrated silk lining providing a private, luminous counterpoint." }
     ],
     views: [
       { label: 'Standing Silhouette', src: imgPath('curiosity', 'curiosity_women_1.jpg'), alt: "Dark Navy jacket — Women's Curiosity Standing Silhouette (Female Model)" },
@@ -221,12 +221,12 @@ const womensJackets = [
     image: imgPath('desire', 'desire_editorial_3.jpg'),
     label: '02 / DESIRE',
     sublabel: 'DEEP RED · WOMEN',
-    headline: "Wanting more is not always greed. Sometimes it is vision.",
-    narrative: "Desire is the instinct that refuses to be satisfied by what is already there. Rendered in deep red suede and cut with fluid feminine tailoring, the jacket carries that essential tension between restraint and appetite. Tonal embroidery shifts across the surface, catching the light with movement. Sensual without spectacle. Expressive without surrendering restraint.",
+    headline: "Wanting more is not greed. Sometimes it is vision.",
+    narrative: "The tension between restraint and appetite. Deep red suede cut with fluid architectural tailoring and shifting tonal embroidery. Sensual without spectacle.",
     craft: [
-      { title: "The Material", desc: "Deeply dyed suede provides richness, supple hand-feel and elegant architectural drape." },
-      { title: "The Embroidery", desc: "Tone-on-tone embroidery integrated across the back and shoulders, emerging gradually as light changes." },
-      { title: "The Inner World", desc: "A richly illustrated lining sits in deliberate contrast to the controlled exterior." }
+      { title: "The Material", desc: "Fluid deep red suede with a soft hand-feel and architectural line." },
+      { title: "The Embroidery", desc: "Fine tonal embroidery tracing the shoulders and back yoke." },
+      { title: "The Inner World", desc: "An intimate illustrated silk lining beneath the restrained exterior." }
     ],
     views: [
       { label: 'Standing Silhouette', src: imgPath('desire', 'desire_editorial_3.jpg'), alt: "Deep Red jacket — Women's Desire Standing Portrait (Female Model BEN04159)" },
@@ -247,11 +247,11 @@ const womensJackets = [
     label: '03 / AUDACITY',
     sublabel: 'MUSTARD · WOMEN',
     headline: "Audacity is confidence before permission arrives.",
-    narrative: "Audacity is the willingness to move before the world has decided you may. The deep mustard suede refuses anonymity, while tonal embroidery tempers its boldness with intricate restraint. Tailored for feminine form, the silhouette stands apart with quiet authority rather than performance.",
+    narrative: "Confidence before permission arrives. Saturated mustard suede tailored with sculptural authority, balanced by fine tonal needlework.",
     craft: [
-      { title: "The Material", desc: "Dyed mustard suede balancing saturated warmth with a supple, sculptural silhouette." },
-      { title: "The Embroidery", desc: "Tonal embroidery contours the upper bodice, revealing intricate texture without competing with the colour." },
-      { title: "The Inner World", desc: "The illustrated lining continues the jacket's confidence inward — a private flourish beneath the controlled surface." }
+      { title: "The Material", desc: "Sculptural mustard suede with a rich, velvety hand-feel and structure." },
+      { title: "The Embroidery", desc: "Bodice tonal embroidery contouring the silhouette without excess." },
+      { title: "The Inner World", desc: "A private flourish of illustrated silk concealed within the garment." }
     ],
     views: [
       { label: 'Front Silhouette', src: imgPath('audacity', 'audacity.jpg'), alt: "Deep Mustard jacket — Women's Audacity Front Leaning Silhouette (Female Model BEN04068)" },
@@ -416,6 +416,7 @@ function renderShowcase(jacket) {
                src="${v.src}"
                alt="${v.alt}"
                loading="lazy"
+               decoding="async"
                width="400"
                height="600" />
           <span class="view-card__overlay" aria-hidden="true"></span>
@@ -429,10 +430,32 @@ function renderShowcase(jacket) {
 
     showcase.innerHTML = `
       <div class="section jacket-detail-inner">
-        <!-- Editorial Header: Split Meta & Narrative -->
-        <div class="jacket-editorial-header">
-          <div class="jacket-meta-column">
-            <div class="jacket-meta-header-row">
+        <div class="showcase-unified-grid">
+          <!-- Left Column: Sticky Hero Stage Gallery -->
+          <div class="showcase-stage-col">
+            <div class="gallery-stage" id="showcaseStage">
+              <div class="gallery-stage__frame">
+                <img class="gallery-stage__img"
+                     id="showcaseStageImg"
+                     src="${firstView.src}"
+                     alt="${firstView.alt}"
+                     loading="eager"
+                     decoding="async"
+                     fetchpriority="high"
+                     width="1200"
+                     height="1800" />
+                <div class="gallery-stage__badge">
+                  <span class="badge-indicator" aria-hidden="true"></span>
+                  <span class="stage-caption" id="showcaseStageCaption">${firstView.label}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Unified Story, Perspectives & Craftsmanship -->
+          <div class="showcase-narrative-col">
+            <!-- Meta Bar: Eyebrow + Quick Nav -->
+            <div class="showcase-meta-bar">
               <div class="jacket-collection-eyebrow">
                 <span class="eyebrow-prefix">${departmentTitle}</span>
                 <span class="eyebrow-sep">/</span>
@@ -448,55 +471,42 @@ function renderShowcase(jacket) {
                 </button>
               </div>
             </div>
-            <h3 class="jacket-name" id="showcaseJacketTitle">${jacket.impulse}</h3>
-            <div class="jacket-colour-tag">
-              <span class="colour-swatch" style="background-color: ${jacket.hex};" aria-hidden="true"></span>
-              <span class="colour-name">${jacket.colour}</span>
-            </div>
-          </div>
 
-          <div class="jacket-story-column">
+            <!-- Jacket Title & Colour Tag -->
+            <div class="jacket-title-row">
+              <h3 class="jacket-name" id="showcaseJacketTitle">${jacket.impulse}</h3>
+              <div class="jacket-colour-tag">
+                <span class="colour-swatch" style="background-color: ${jacket.hex};" aria-hidden="true"></span>
+                <span class="colour-name">${jacket.colour}</span>
+              </div>
+            </div>
+
+
+            <!-- Poetic Script Headline Quote -->
             <p class="jacket-headline">${jacket.headline}</p>
+
+            <!-- Narrative Story Paragraph -->
             <p class="jacket-narrative">${jacket.narrative}</p>
 
+            <!-- Photographic Perspectives Gallery -->
+            <div class="jacket-perspectives-block" data-gallery-jacket="${jacket.id}">
+              <div class="gallery-section-bar">
+                <h4 class="gallery-heading">Photographic Perspectives</h4>
+                <span class="gallery-counter-tag">${jacket.views.length} Perspectives</span>
+              </div>
+              <div class="gallery-views-grid" role="list" aria-label="${departmentTitle} ${jacket.impulse} jacket views">
+                ${viewsHtml}
+              </div>
+            </div>
+
+            <!-- Craftsmanship Specifications -->
             <dl class="jacket-craft-list">
               ${craftHtml}
             </dl>
           </div>
         </div>
 
-        <!-- Luxury Product Gallery -->
-        <div class="jacket-gallery-container" data-gallery-jacket="${jacket.id}">
-          <div class="gallery-section-bar">
-            <h4 class="gallery-heading">Photographic Perspectives</h4>
-            <span class="gallery-counter-tag">${jacket.views.length} Perspectives</span>
-          </div>
-          <div class="jacket-gallery-editorial">
-            <!-- Prominent Main Stage (Large, 2:3 ratio) -->
-            <div class="gallery-stage" id="showcaseStage">
-              <div class="gallery-stage__frame">
-                <img class="gallery-stage__img"
-                     id="showcaseStageImg"
-                     src="${firstView.src}"
-                     alt="${firstView.alt}"
-                     loading="eager"
-                     width="1200"
-                     height="1800" />
-                <div class="gallery-stage__badge">
-                  <span class="badge-indicator" aria-hidden="true"></span>
-                  <span class="stage-caption" id="showcaseStageCaption">${firstView.label}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Additional Views Grid -->
-            <div class="gallery-views-grid" role="list" aria-label="${departmentTitle} ${jacket.impulse} jacket views">
-              ${viewsHtml}
-            </div>
-          </div>
-        </div>
-
-        <!-- Understated Product Navigation (Previous / Next & Carousel Return) -->
+        <!-- Understated Product Navigation Bar -->
         <nav class="showcase-bottom-nav" aria-label="Jacket navigation">
           <button type="button" class="showcase-nav-btn prev-jacket-btn" id="prevJacketBtn" aria-label="Previous jacket: ${prevJacket.number} ${prevJacket.impulse}">
             <span class="nav-arrow" aria-hidden="true">&larr;</span>
@@ -518,8 +528,7 @@ function renderShowcase(jacket) {
             <span class="nav-arrow" aria-hidden="true">&rarr;</span>
           </button>
         </nav>
-      </div>
-    `;
+      </div>    `;
 
     // Bind thumbnail click events for main stage swapping
     const stage = document.getElementById('showcaseStage');
@@ -714,7 +723,7 @@ function createAccordionGallery({
 
   function applyLayout(animate = true) {
     if (!panelEls.length) return;
-    const isVert = window.innerWidth <= 768;
+    const isVert = window.innerWidth <= 640;
     root.classList.toggle('accordion-gallery--vertical', isVert);
 
     const r = Math.min(Math.max(expandRatio, 0.2), 0.9);
@@ -770,7 +779,7 @@ function createAccordionGallery({
   }
 
   const measure = () => {
-    const isVert = window.innerWidth <= 768;
+    const isVert = window.innerWidth <= 640;
     root.classList.toggle('accordion-gallery--vertical', isVert);
     const rect = root.getBoundingClientRect();
     const total = isVert ? rect.height : rect.width;
@@ -783,9 +792,12 @@ function createAccordionGallery({
   };
 
   measure();
-  const ro = new ResizeObserver(measure);
-  ro.observe(root);
-  window.addEventListener('resize', measure);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(measure);
+    ro.observe(root);
+  } else {
+    window.addEventListener('resize', measure, { passive: true });
+  }
 
   applyLayout(!firstRun);
   firstRun = false;
@@ -1002,6 +1014,9 @@ function initDriftWall() {
 
   let lastTime = performance.now();
 
+  let wallInView = true;
+  let wallRafId = null;
+
   function animateWall(now) {
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
@@ -1020,10 +1035,41 @@ function initDriftWall() {
     }
 
     updatePlaneTransform();
-    requestAnimationFrame(animateWall);
   }
 
-  requestAnimationFrame(animateWall);
+  function driftLoop(now) {
+    if (!wallInView || document.hidden || isReducedMotion()) {
+      wallRafId = null;
+      return;
+    }
+    animateWall(now);
+    wallRafId = requestAnimationFrame(driftLoop);
+  }
+
+  function startDriftLoop() {
+    if (!wallRafId && wallInView && !document.hidden && !isReducedMotion()) {
+      lastTime = performance.now();
+      wallRafId = requestAnimationFrame(driftLoop);
+    }
+  }
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      wallInView = entries[0].isIntersecting;
+      if (wallInView) {
+        startDriftLoop();
+      }
+    }, { threshold: 0.05 });
+    observer.observe(container);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && wallInView) {
+      startDriftLoop();
+    }
+  }, { passive: true });
+
+  startDriftLoop();
 
   root.addEventListener('pointermove', (e) => {
     const rect = root.getBoundingClientRect();
