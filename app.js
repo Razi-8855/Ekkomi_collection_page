@@ -630,6 +630,9 @@ function selectJacket(id, { scroll = false, fromAccordion = false, fromDepartmen
 
   selectedJacketId = id;
   window.currentSelectedJacket = item;
+  if (userInitiated) {
+    window.userHasSelectedJacket = true;
+  }
   document.body.dataset.selectedJacket = id;
 
   // Sync accordion active panel

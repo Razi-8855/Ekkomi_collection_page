@@ -207,7 +207,7 @@
       floatingBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const activeDept = window.currentSelectedDepartment || document.body.dataset.activeDepartment || 'men';
-        const activeJacket = window.currentSelectedJacket || null;
+        const activeJacket = window.userHasSelectedJacket ? (window.currentSelectedJacket || null) : null;
 
         openWaitlist({
           collection: activeDept,
