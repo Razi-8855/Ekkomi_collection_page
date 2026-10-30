@@ -8,7 +8,7 @@
   <title>Ekkomi — Nocturne</title>
   <link rel="icon" type="image/png" href="assets/ekkomi_favicon.png" />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=jacket_thumbs_v1" />
+  <link rel="stylesheet" href="styles.css?v=nocturne_v2" />
 </head>
 
 <body>
@@ -146,7 +146,14 @@
 
   <!-- GSAP for smooth high-performance Accordion Gallery transitions -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="app.js?v=lux_uk_v1"></script>
+  <script src="app.js?v=nocturne_v2"></script>
+
+  
+  <!-- Persistent Floating Join Waiting List Button (Bottom-Left) -->
+  <button type="button" class="floating-waitlist-btn" id="floatingWaitlistBtn" aria-label="Join the waiting list">
+    <span class="floating-btn-text">JOIN THE WAITING LIST</span>
+    <span class="floating-btn-indicator" aria-hidden="true"></span>
+  </button>
 
   <!-- ============================================================
        JOIN THE WAITING LIST: MULTI-STEP EDITORIAL MODAL
@@ -222,6 +229,7 @@
         <div class="waitlist-step-content text-center">
           <p class="waitlist-eyebrow">STEP 03 / 04 &middot; <span id="summaryJacketLabel">DESIRE</span></p>
           <h2 class="waitlist-title">SELECT YOUR SIZE</h2>
+          <p class="waitlist-subtitle" id="step4Subtitle">Currently unavailable. Select your size to join the waiting list.</p>
           <div class="waitlist-sizes-grid" id="waitlistSizesGrid" role="radiogroup" aria-label="Select size">
             <!-- Populated dynamically by waitlist.js -->
           </div>
@@ -300,7 +308,7 @@
   </div>
 
   <!-- Multi-step Waiting List logic & backend integration -->
-  <script src="waitlist.js?v=jacket_thumbs_v1"></script>
+  <script src="waitlist.js?v=nocturne_v2"></script>
 </body>
 
 </html>

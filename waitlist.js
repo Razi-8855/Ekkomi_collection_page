@@ -16,7 +16,7 @@
 
   // Optional automatic appearance configuration
   const AUTO_POPUP_CONFIG = {
-    enabled: true, // Automatically opens first when customer enters collection page
+    enabled: false, // Automatically opens first when customer enters collection page
     delayMs: 600,
     storageKey: 'ekkomi_waitlist_dismissed'
   };
@@ -61,16 +61,16 @@
   // Jacket Definitions by Collection with Editorial Images
   const JACKET_CATALOG = {
     men: [
-      { key: 'curiosity', id: 'men-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', image: 'assets/collection/nocturne/curiosity/curiosity.jpg' },
-      { key: 'temptation', id: 'men-temptation', number: '02', name: 'TEMPTATION', colour: 'Forest Green', hex: '#27382b', image: 'assets/collection/nocturne/temptation/temptation_detail.jpg' },
-      { key: 'desire', id: 'men-desire', number: '03', name: 'DESIRE', colour: 'Deep Red', hex: '#662225', image: 'assets/collection/nocturne/desire/desire_lookbook_2.jpg' },
-      { key: 'audacity', id: 'men-audacity', number: '04', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', image: 'assets/collection/nocturne/audacity/audacity_lookbook_2.jpg' },
-      { key: 'insolence', id: 'men-insolence', number: '05', name: 'INSOLENCE', colour: 'Black', hex: '#1a1716', image: 'assets/collection/nocturne/insolence/insolence_detail.jpg' }
+      { key: 'curiosity', id: 'men-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', inStock: false, image: 'assets/collection/nocturne/curiosity/curiosity_lookbook_1.jpg' },
+      { key: 'temptation', id: 'men-temptation', number: '02', name: 'TEMPTATION', colour: 'Forest Green', hex: '#27382b', inStock: true, image: 'assets/collection/nocturne/temptation/temptation.jpg' },
+      { key: 'desire', id: 'men-desire', number: '03', name: 'DESIRE', colour: 'Deep Red', hex: '#662225', inStock: false, image: 'assets/collection/nocturne/desire/desire.jpg' },
+      { key: 'audacity', id: 'men-audacity', number: '04', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', inStock: true, image: 'assets/collection/nocturne/audacity/audacity_lookbook_1.jpg' },
+      { key: 'insolence', id: 'men-insolence', number: '05', name: 'INSOLENCE', colour: 'Black', hex: '#1a1716', inStock: false, image: 'assets/collection/nocturne/insolence/insolence.jpg' }
     ],
     women: [
-      { key: 'curiosity', id: 'women-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', image: 'assets/collection/nocturne/curiosity/curiosity_women_2.jpg' },
-      { key: 'desire', id: 'women-desire', number: '02', name: 'DESIRE', colour: 'Deep Red', hex: '#662225', image: 'assets/collection/nocturne/desire/desire_editorial_2.jpg' },
-      { key: 'audacity', id: 'women-audacity', number: '03', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', image: 'assets/collection/nocturne/audacity/audacity_editorial_1.jpg' }
+      { key: 'curiosity', id: 'women-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', inStock: false, image: 'assets/collection/nocturne/curiosity/curiosity_women_1.jpg' },
+      { key: 'desire', id: 'women-desire', number: '02', name: 'DESIRE', colour: 'Deep Red', hex: '#662225', inStock: false, image: 'assets/collection/nocturne/desire/desire_editorial_3.jpg' },
+      { key: 'audacity', id: 'women-audacity', number: '03', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', inStock: true, image: 'assets/collection/nocturne/audacity/audacity.jpg' }
     ]
   };
 
@@ -201,6 +201,26 @@
       });
     }
 
+    // Floating waitlist button
+    const floatingBtn = document.getElementById('floatingWaitlistBtn');
+    if (floatingBtn) {
+      floatingBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const activeDept = window.currentSelectedDepartment || document.body.dataset.activeDepartment || 'men';
+        const activeJacket = window.currentSelectedJacket || null;
+
+        openWaitlist({
+          collection: activeDept,
+          jacketKey: activeJacket ? activeJacket.key : null,
+          jacketName: activeJacket ? activeJacket.impulse : null,
+          jacketNumber: activeJacket ? activeJacket.number : null,
+          jacketHex: activeJacket ? activeJacket.hex : null,
+          jacketColour: activeJacket ? activeJacket.colour : null,
+          outOfStock: activeJacket ? (activeJacket.inStock === false) : false
+        });
+      });
+    }
+
     // Document-level listener for dynamically rendered buttons (e.g. inside dynamic product showcase)
     document.addEventListener('click', (e) => {
       const target = e.target.closest('#showcaseWaitlistBtn, .btn-join-waitlist, [data-open-waitlist]');
@@ -260,6 +280,7 @@
     } catch (e) { }
 
     state.isOpen = true;
+    state.outOfStock = !!preselects.outOfStock;
     document.body.classList.add('waitlist-open');
 
     // Preselect collection if passed or keep existing
@@ -432,7 +453,7 @@
           <div class="jacket-card-left">
             ${j.image ? `
               <div class="jacket-thumb-wrapper">
-                <img src="${j.image}" alt="${j.name} jacket" class="jacket-thumb-img" loading="lazy">
+                <img src="${j.image}" alt="${j.name} jacket" class="jacket-thumb-img" loading="eager" decoding="async">
               </div>
             ` : ''}
             <span class="jacket-swatch" style="background-color: ${j.hex};" aria-hidden="true"></span>
@@ -441,7 +462,7 @@
               <span class="jacket-name">${j.name}</span>
             </div>
           </div>
-          <span class="jacket-colour">${j.colour}</span>
+          
         </button>
       `;
     }).join('');
@@ -495,8 +516,16 @@
 
   function syncSizesUI() {
     const jacketLabel = document.getElementById('summaryJacketLabel');
+    const sizeSubtitle = document.getElementById('step4Subtitle');
+    if (sizeSubtitle) {
+      if (state.outOfStock) {
+        sizeSubtitle.textContent = 'This piece is currently unavailable. Select your size to join the waiting list.';
+      } else {
+        sizeSubtitle.textContent = 'Select your size to join the waiting list.';
+      }
+    }
     if (jacketLabel && state.jacket) {
-      jacketLabel.textContent = `${state.jacket.name} (${state.jacket.colour})`;
+      jacketLabel.textContent = state.jacket.name;
     }
 
     const sizeBtns = dialogEl.querySelectorAll('[data-size]');
