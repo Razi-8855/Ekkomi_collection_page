@@ -61,16 +61,16 @@
   // Jacket Definitions by Collection with Editorial Images
   const JACKET_CATALOG = {
     men: [
-      { key: 'curiosity', id: 'men-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', inStock: false, image: 'assets/collection/nocturne/curiosity/curiosity_lookbook_1.jpg' },
-      { key: 'temptation', id: 'men-temptation', number: '02', name: 'TEMPTATION', colour: 'Forest Green', hex: '#27382b', inStock: true, image: 'assets/collection/nocturne/temptation/temptation.jpg' },
+      { key: 'curiosity', id: 'men-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', inStock: false, image: 'assets/collection/nocturne/curiosity/curiosity.jpg' },
+      { key: 'temptation', id: 'men-temptation', number: '02', name: 'TEMPTATION', colour: 'Forest Green', hex: '#27382b', inStock: false, image: 'assets/collection/nocturne/temptation/temptation_lookbook_1.jpg' },
       { key: 'desire', id: 'men-desire', number: '03', name: 'DESIRE', colour: 'Deep Red', hex: '#662225', inStock: false, image: 'assets/collection/nocturne/desire/desire.jpg' },
-      { key: 'audacity', id: 'men-audacity', number: '04', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', inStock: true, image: 'assets/collection/nocturne/audacity/audacity_lookbook_1.jpg' },
-      { key: 'insolence', id: 'men-insolence', number: '05', name: 'INSOLENCE', colour: 'Black', hex: '#1a1716', inStock: false, image: 'assets/collection/nocturne/insolence/insolence.jpg' }
+      { key: 'audacity', id: 'men-audacity', number: '04', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', inStock: false, image: 'assets/collection/nocturne/audacity/audacity_lookbook_2.jpg' },
+      { key: 'insolence', id: 'men-insolence', number: '05', name: 'INSOLENCE', colour: 'Black', hex: '#1a1716', inStock: false, image: 'assets/collection/nocturne/insolence/insolence_detail.jpg' }
     ],
     women: [
-      { key: 'curiosity', id: 'women-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', inStock: false, image: 'assets/collection/nocturne/curiosity/curiosity_women_1.jpg' },
+      { key: 'curiosity', id: 'women-curiosity', number: '01', name: 'CURIOSITY', colour: 'Dark Navy', hex: '#1c2838', inStock: false, image: 'assets/collection/nocturne/curiosity/curiosity_women_2.jpg' },
       { key: 'desire', id: 'women-desire', number: '02', name: 'DESIRE', colour: 'Deep Red', hex: '#662225', inStock: false, image: 'assets/collection/nocturne/desire/desire_editorial_3.jpg' },
-      { key: 'audacity', id: 'women-audacity', number: '03', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', inStock: true, image: 'assets/collection/nocturne/audacity/audacity.jpg' }
+      { key: 'audacity', id: 'women-audacity', number: '03', name: 'AUDACITY', colour: 'Deep Mustard', hex: '#8c6b24', inStock: false, image: 'assets/collection/nocturne/audacity/audacity.jpg' }
     ]
   };
 
@@ -462,7 +462,7 @@
               <span class="jacket-name">${j.name}</span>
             </div>
           </div>
-          
+          <span class="jacket-select-radio" aria-hidden="true"></span>
         </button>
       `;
     }).join('');

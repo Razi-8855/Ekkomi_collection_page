@@ -84,7 +84,7 @@ const mensJackets = [
     impulse: "Temptation",
     colour: "Forest Green",
     hex: "#27382b",
-    inStock: true,
+    inStock: false,
     image: imgPath('temptation', 'temptation.jpg'),
     label: "02 / TEMPTATION",
     sublabel: "",
@@ -140,7 +140,7 @@ const mensJackets = [
     impulse: "Audacity",
     colour: "Deep Mustard",
     hex: "#8c6b24",
-    inStock: true,
+    inStock: false,
     image: imgPath('audacity', 'audacity_lookbook_1.jpg'),
     label: "04 / AUDACITY",
     sublabel: "",
@@ -254,7 +254,7 @@ const womensJackets = [
     impulse: "Audacity",
     colour: "Deep Mustard",
     hex: "#8c6b24",
-    inStock: true,
+    inStock: false,
     image: imgPath('audacity', 'audacity.jpg'),
     label: "03 / AUDACITY",
     sublabel: "",
@@ -518,6 +518,12 @@ function renderShowcase(jacket) {
 
             <!-- Waitlist CTA inside Showcase (Positioned after craftsmanship specs) -->
             <div class="showcase-cta-wrap">
+              ${jacket.inStock === false ? `
+                <div class="showcase-stock-callout">
+                  <span class="stock-pulse-dot" aria-hidden="true"></span>
+                  <span>Out of stock &mdash; Available exclusively via priority waitlist</span>
+                </div>
+              ` : ''}
               <button type="button" class="showcase-waitlist-btn btn-join-waitlist" id="showcaseWaitlistBtn" data-open-waitlist>
                 ${jacket.inStock === false ? 'OUT OF STOCK &mdash; JOIN THE WAITING LIST' : 'JOIN THE WAITING LIST'}
               </button>
@@ -651,9 +657,18 @@ function selectJacket(id, { scroll = false, fromAccordion = false, fromDepartmen
     scrollToShowcase(true);
   }
 
-  // If user clicked this jacket and it is marked out of stock, trigger waitlist popup with jacket details!
+  // Clear any existing pending waitlist popup timer
+  if (window.pendingWaitlistTimer) {
+    clearTimeout(window.pendingWaitlistTimer);
+    window.pendingWaitlistTimer = null;
+  }
+
+  // If user clicked this jacket and it is marked out of stock,
+  // allow customer to explore the jacket and clearly see OUT OF STOCK first,
+  // then trigger the waitlist popup!
   if (userInitiated && item.inStock === false) {
-    setTimeout(() => {
+    window.pendingWaitlistTimer = setTimeout(() => {
+      window.pendingWaitlistTimer = null;
       if (window.EkkomiWaitlist && window.EkkomiWaitlist.open) {
         window.EkkomiWaitlist.open({
           collection: item.gender,
@@ -665,7 +680,7 @@ function selectJacket(id, { scroll = false, fromAccordion = false, fromDepartmen
           outOfStock: true
         });
       }
-    }, 320);
+    }, 2400); // 2.4s gives customer time to scroll to showcase and clearly see OUT OF STOCK first
   }
 }
 
@@ -748,7 +763,7 @@ function createAccordionGallery({
 
     const text = document.createElement('span');
     text.className = 'ag-panel__text';
-    text.innerHTML = `<span class="ag-label-title">${item.label}</span>`;
+    text.innerHTML = `<span class="ag-label-title">${item.label}</span>${item.inStock === false ? '<span class="ag-label-stock">OUT OF STOCK</span>' : ''}`;
     textEls[i] = text;
 
     label.appendChild(bar);
