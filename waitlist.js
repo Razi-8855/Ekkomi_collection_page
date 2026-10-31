@@ -223,6 +223,25 @@
 
     // Document-level listener for dynamically rendered buttons (e.g. inside dynamic product showcase)
     document.addEventListener('click', (e) => {
+      const notifyBtn = e.target.closest('.btn-notify-when-available, #showcaseNotifyBtn, [data-notify-jacket]');
+      if (notifyBtn) {
+        e.preventDefault();
+        const activeDept = notifyBtn.dataset.collection || window.currentSelectedDepartment || document.body.dataset.activeDepartment || 'men';
+        const activeJacketKey = notifyBtn.dataset.jacketKey || (window.currentSelectedJacket ? window.currentSelectedJacket.key : null);
+        const catalog = JACKET_CATALOG[activeDept] || mensJackets;
+        const jacketObj = (catalog && catalog.find(j => j.key === activeJacketKey)) || window.currentSelectedJacket;
+
+        openWaitlist({
+          collection: activeDept,
+          jacketKey: activeJacketKey,
+          jacketName: jacketObj ? (jacketObj.impulse || jacketObj.name) : null,
+          jacketNumber: jacketObj ? jacketObj.number : null,
+          jacketHex: jacketObj ? jacketObj.hex : null,
+          jacketColour: jacketObj ? jacketObj.colour : null,
+          outOfStock: true
+        });
+        return;
+      }
       const target = e.target.closest('#showcaseWaitlistBtn, .btn-join-waitlist, [data-open-waitlist]');
       if (target) {
         e.preventDefault();
@@ -684,7 +703,19 @@
           localStorage.removeItem('ekkomi_waitlist_draft');
         } catch (e) { }
 
-        goToStep(6, false);
+        try {
+          sessionStorage.setItem('ekkomi_waitlist_success', JSON.stringify({
+            jacketName: state.jacket ? state.jacket.name : '',
+            size: state.size || '',
+            collection: state.collection || '',
+            registrationId: state.registrationId || '',
+            timestamp: Date.now()
+          }));
+        } catch { }
+
+        // Client requirement: redirect browser to dedicated /thank-you page
+        window.location.href = '/thank-you';
+        return;
       } else {
         // Keep customer details intact and show specific error
         showError('generalFormError', errorMessage);

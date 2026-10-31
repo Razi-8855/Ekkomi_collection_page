@@ -523,10 +523,14 @@ function renderShowcase(jacket) {
                   <span class="stock-pulse-dot" aria-hidden="true"></span>
                   <span>Out of stock &mdash; Available exclusively via priority waitlist</span>
                 </div>
-              ` : ''}
-              <button type="button" class="showcase-waitlist-btn btn-join-waitlist" id="showcaseWaitlistBtn" data-open-waitlist>
-                ${jacket.inStock === false ? 'OUT OF STOCK &mdash; JOIN THE WAITING LIST' : 'JOIN THE WAITING LIST'}
-              </button>
+                <button type="button" class="showcase-notify-btn btn-notify-when-available" id="showcaseNotifyBtn" data-jacket-key="${jacket.key}" data-collection="${jacket.gender}" data-jacket-name="${jacket.impulse}">
+                  NOTIFY ME WHEN AVAILABLE
+                </button>
+              ` : `
+                <button type="button" class="showcase-waitlist-btn btn-join-waitlist" id="showcaseWaitlistBtn" data-open-waitlist>
+                  JOIN THE WAITING LIST
+                </button>
+              `}
             </div>
           </div>
         </div>
@@ -663,25 +667,8 @@ function selectJacket(id, { scroll = false, fromAccordion = false, fromDepartmen
     window.pendingWaitlistTimer = null;
   }
 
-  // If user clicked this jacket and it is marked out of stock,
-  // allow customer to explore the jacket and clearly see OUT OF STOCK first,
-  // then trigger the waitlist popup!
-  if (userInitiated && item.inStock === false) {
-    window.pendingWaitlistTimer = setTimeout(() => {
-      window.pendingWaitlistTimer = null;
-      if (window.EkkomiWaitlist && window.EkkomiWaitlist.open) {
-        window.EkkomiWaitlist.open({
-          collection: item.gender,
-          jacketKey: item.key,
-          jacketName: item.impulse,
-          jacketNumber: item.number,
-          jacketHex: item.hex,
-          jacketColour: item.colour,
-          outOfStock: true
-        });
-      }
-    }, 2400); // 2.4s gives customer time to scroll to showcase and clearly see OUT OF STOCK first
-  }
+  // Out-of-stock jackets display prominent 'NOTIFY ME WHEN AVAILABLE' CTA in showcase.
+  // Popup is user-initiated by clicking the button, not auto-interrupted by timer.
 }
 
 /* -------------------------------------------------------------------
